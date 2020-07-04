@@ -9,6 +9,13 @@ class LoadingScreen : Screen{
     val batch = SpriteBatch()
     val font = BitmapFont()
 
+    var x: Float = 0f
+    var y: Float = 0f
+
+    var counter = 0f
+    var timer = 0f
+    var fps = 0f
+
     override fun hide() {
 
     }
@@ -17,9 +24,15 @@ class LoadingScreen : Screen{
     }
 
     override fun render(delta: Float) {
+        counter++
+        timer += (delta)
+        fps = (counter / delta)
+
+        println(fps)
         batch.use {
-            font.draw(it, "Loading", 100f, 100f)
+            font.draw(it, "$fps", x, y)
         }
+
     }
 
     override fun pause() {
@@ -29,6 +42,8 @@ class LoadingScreen : Screen{
     }
 
     override fun resize(width: Int, height: Int) {
+        x = width / 2f
+        y = height / 2f
     }
 
     override fun dispose() {
