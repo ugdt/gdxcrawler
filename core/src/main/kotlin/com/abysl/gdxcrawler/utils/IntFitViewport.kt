@@ -15,7 +15,7 @@ class IntFitViewport(targetWidth: Float, targetHeight: Float) : ScalingViewport(
         val sourceRatio = sourceHeight / sourceWidth
 
         val exactScale = if (targetRatio > sourceRatio) targetWidth / sourceWidth else targetHeight / sourceHeight
-        val scale = MathUtils.round(exactScale)
+        val scale = MathUtils.floor(exactScale)
 
         temp.x = sourceWidth * scale
         temp.y = sourceHeight * scale

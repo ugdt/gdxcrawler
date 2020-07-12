@@ -2,6 +2,7 @@ package com.abysl.gdxcrawler
 
 import com.abysl.gdxcrawler.utils.PixelPerfectScreen
 import com.abysl.gdxcrawler.world.World
+import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.GridPoint2
 
 class WorldScreen : PixelPerfectScreen(320, 180) {

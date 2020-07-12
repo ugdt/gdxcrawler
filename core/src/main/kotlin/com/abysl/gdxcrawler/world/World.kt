@@ -22,6 +22,7 @@ class World(private val tileSize: Int, private val chunkSideLength: Int) {
         level = DesertLevel()
         val tileLayer = TiledMapTileLayer(16384, 16384, 16, 16)
         tiledMap.layers.add(tileLayer)
+        tiledMap.tileSets.addTileSet(level.tiledSet)
     }
 
     fun getRenderer(batch: Batch): BatchTiledMapRenderer {
@@ -44,7 +45,9 @@ class World(private val tileSize: Int, private val chunkSideLength: Int) {
                 val tileMapX = x + chunk.tileMapPosition.x
                 val tileMapY = y + chunk.tileMapPosition.y
 
-                baseLayer.setCell((tileMapX), (tileMapY), chunkTiles[GridPoint2(x, y)])
+                val cell = chunkTiles[GridPoint2(x, y)]
+
+                baseLayer.setCell((tileMapX), (tileMapY), cell)
             }
     }
 

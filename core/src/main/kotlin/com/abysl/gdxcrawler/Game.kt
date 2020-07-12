@@ -3,15 +3,15 @@ package com.abysl.gdxcrawler
 import com.abysl.gdxcrawler.utils.IPhysics
 import com.badlogic.gdx.Screen
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ktx.app.KtxGame
 import ktx.assets.async.AssetStorage
+import ktx.async.newAsyncContext
 import kotlin.system.measureTimeMillis
 
 class Game : KtxGame<Screen>() {
-    private val coroutineScope = CoroutineScope(Dispatchers.Default)
+    private val physicsScope = CoroutineScope(newAsyncContext(2))
     private val physicsTickRate = (1f / 60f) // 60 times per second
     private var timeSinceLastTick = 0f
 
@@ -21,9 +21,9 @@ class Game : KtxGame<Screen>() {
         addScreen(MainMenu())
         addScreen(TestScreen())
         addScreen(WorldScreen())
-        setScreen<TestScreen>()
+        setScreen<WorldScreen>()
 
-        coroutineScope.launch {
+        physicsScope.launch {
             physicsLoop()
         }
     }
