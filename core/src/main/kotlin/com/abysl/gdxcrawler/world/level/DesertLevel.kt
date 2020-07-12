@@ -15,7 +15,7 @@ class DesertLevel : Level() {
     override val tiledSet: TiledMapTileSet = TiledMapTileSet()
 
     private val waterTileId = 151 // 16 * 9 + 7
-    private val sandTileId = 247 // 16 * 15 + 3
+    private val sandTileId = 243 // 16 * 15 + 3
 
     init {
         val tiles = Texture("levels/desertlevel/SB-LandTileset.png") // fetch sprite sheet from assets

@@ -1,11 +1,12 @@
 package com.abysl.gdxcrawler.utils
 
+import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.viewport.ScalingViewport
 
-class IntFitViewport(targetWidth: Float, targetHeight: Float) : ScalingViewport(Scaling.fit, targetWidth, targetHeight) {
+class IntFitViewport(targetWidth: Float, targetHeight: Float, camera: Camera) : ScalingViewport(Scaling.fit, targetWidth, targetHeight, camera) {
     private companion object {
         private val temp: Vector2 = Vector2()
     }

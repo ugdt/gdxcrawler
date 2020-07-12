@@ -1,7 +1,7 @@
 package com.abysl.gdxcrawler
 
 import com.abysl.gdxcrawler.entities.PlayerEntity
-import com.abysl.gdxcrawler.utils.IPhysics
+import com.abysl.gdxcrawler.physics.IPhysics
 import com.abysl.gdxcrawler.utils.PixelPerfectScreen
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.math.Vector2
@@ -13,7 +13,6 @@ class TestScreen : IPhysics, PixelPerfectScreen(320, 180) {
     private var direction = Vector2(1f, 1f)
 
     override fun hide() {
-
     }
 
     override fun show() {

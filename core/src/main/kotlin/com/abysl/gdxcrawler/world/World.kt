@@ -1,7 +1,6 @@
 package com.abysl.gdxcrawler.world
 
 import com.abysl.gdxcrawler.utils.PixelPerfectOrthoTiledMapRenderer
-import com.abysl.gdxcrawler.world.level.DesertLevel
 import com.abysl.gdxcrawler.world.level.Level
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.maps.tiled.TiledMap
@@ -11,22 +10,18 @@ import com.badlogic.gdx.math.GridPoint2
 import com.badlogic.gdx.utils.ObjectMap
 import ktx.collections.*
 
-class World(private val tileSize: Int, private val chunkSideLength: Int) {
+class World(private val tileSize: Int, private val chunkSideLength: Int, private val level: Level) {
     private val tiledMap = TiledMap()
-    private val baseLayer: TiledMapTileLayer
-        get() = tiledMap.layers[0] as TiledMapTileLayer
+    private val baseLayer = TiledMapTileLayer(16384, 16384, tileSize, tileSize)
     private val allChunks = ObjectMap<GridPoint2, Chunk>()
-    private val level: Level
 
     init {
-        level = DesertLevel()
-        val tileLayer = TiledMapTileLayer(16384, 16384, 16, 16)
-        tiledMap.layers.add(tileLayer)
+        tiledMap.layers.add(baseLayer)
         tiledMap.tileSets.addTileSet(level.tiledSet)
     }
 
     fun getRenderer(batch: Batch): BatchTiledMapRenderer {
-        return PixelPerfectOrthoTiledMapRenderer(tiledMap, (1f / tileSize), batch)
+        return PixelPerfectOrthoTiledMapRenderer(tiledMap, 1f, batch)
     }
 
     fun generateChunksAround(pixelPosition: GridPoint2, radius: Int) {
@@ -40,19 +35,20 @@ class World(private val tileSize: Int, private val chunkSideLength: Int) {
     private fun placeChunk(chunk: Chunk) {
         val chunkTiles = chunk.getTiles()
 
-        for (x in 0 until chunkSideLength)
+        for (x in 0 until chunkSideLength) {
             for (y in 0 until chunkSideLength) {
                 val tileMapX = x + chunk.tileMapPosition.x
                 val tileMapY = y + chunk.tileMapPosition.y
 
-                val cell = chunkTiles[GridPoint2(x, y)]
+                val cell = chunkTiles[x][y]
 
                 baseLayer.setCell((tileMapX), (tileMapY), cell)
             }
+        }
     }
 
-    private fun findChunksAround(position: GridPoint2, radius: Int): List<Chunk> {
-        val centerChunkPosition = dividePosByChunkLength(dividePosByTileSize(position))
+    private fun findChunksAround(pixelPosition: GridPoint2, radius: Int): List<Chunk> {
+        val centerChunkPosition = dividePosByChunkLength(dividePosByTileSize(pixelPosition))
         val chunks = mutableListOf<Chunk>()
 
         for (x in (centerChunkPosition.x - radius)..(centerChunkPosition.x + radius))
@@ -70,8 +66,8 @@ class World(private val tileSize: Int, private val chunkSideLength: Int) {
     }
 
     private fun multiplyPosByChunkLength(chunkPosition: GridPoint2): GridPoint2 {
-        val chunkX = chunkPosition.x * 16
-        val chunkY = chunkPosition.y * 16
+        val chunkX = chunkPosition.x * chunkSideLength
+        val chunkY = chunkPosition.y * chunkSideLength
 
         return GridPoint2(chunkX, chunkY)
     }
@@ -84,10 +80,10 @@ class World(private val tileSize: Int, private val chunkSideLength: Int) {
         return GridPoint2(tileX, tileY)
     }
 
-    private fun dividePosByChunkLength(pixelPosition: GridPoint2): GridPoint2 {
-        val tileX = pixelPosition.x / chunkSideLength
-        val tileY = pixelPosition.y / chunkSideLength
+    private fun dividePosByChunkLength(tilePosition: GridPoint2): GridPoint2 {
+        val chunkX = tilePosition.x / chunkSideLength
+        val chunkY = tilePosition.y / chunkSideLength
 
-        return GridPoint2(tileX, tileY)
+        return GridPoint2(chunkX, chunkY)
     }
 }

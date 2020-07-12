@@ -7,10 +7,9 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import ktx.graphics.use
 
 class MainMenu : Screen {
-
-    val texture = TextureAtlas()
-    val sprite = Sprite()
-    val batch = SpriteBatch()
+    private val texture = TextureAtlas()
+    private val sprite = Sprite()
+    private val batch = SpriteBatch()
 
     override fun hide() {
     }
