@@ -1,18 +1,19 @@
 package com.abysl.gdxcrawler
 
-import com.abysl.gdxcrawler.physics.IPhysics
-import com.abysl.gdxcrawler.utils.PixelPerfectScreen
+import com.abysl.gdxcrawler.utils.PixelPerfectRenderer
 import com.abysl.gdxcrawler.world.World
 import com.abysl.gdxcrawler.world.level.DesertLevel
+import com.badlogic.gdx.Screen
 import com.badlogic.gdx.math.GridPoint2
 
-class WorldScreen : IPhysics, PixelPerfectScreen(320, 180) {
+class WorldScreen : Screen {
     private val world = World(16, 16, DesertLevel())
-    private val worldMapRenderer = world.getRenderer(fboSpriteBatch)
+    private val pixelPerfectRenderer = PixelPerfectRenderer(320, 180)
+    private val worldMapRenderer = world.getRenderer(pixelPerfectRenderer.fboSpriteBatch)
 
     init {
         world.generateChunksAround(GridPoint2(0, 0), 5)
-        worldMapRenderer.setView(camera)
+        worldMapRenderer.setView(pixelPerfectRenderer.camera)
     }
 
     override fun hide() {
@@ -21,9 +22,12 @@ class WorldScreen : IPhysics, PixelPerfectScreen(320, 180) {
     override fun show() {
     }
 
-    override fun draw(delta: Float) {
-        worldMapRenderer.setView(camera)
-        worldMapRenderer.render()
+    override fun render(delta: Float) {
+        worldMapRenderer.setView(pixelPerfectRenderer.camera)
+
+        pixelPerfectRenderer.render {
+            worldMapRenderer.render()
+        }
     }
 
     override fun pause() {
@@ -32,9 +36,10 @@ class WorldScreen : IPhysics, PixelPerfectScreen(320, 180) {
     override fun resume() {
     }
 
-    override fun dispose() {
+    override fun resize(width: Int, height: Int) {
+        pixelPerfectRenderer.resize(width, height)
     }
 
-    override fun physics(delta: Float) {
+    override fun dispose() {
     }
 }

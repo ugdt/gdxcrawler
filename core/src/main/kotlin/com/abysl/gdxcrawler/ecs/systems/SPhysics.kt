@@ -23,7 +23,6 @@ class SPhysics : IteratingSystem() {
 
     override fun initialize() {
         tagManager = world.getSystem(TagManager::class.java)
-
     }
 
     override fun process(entityId: Int) {
@@ -52,14 +51,14 @@ class SPhysics : IteratingSystem() {
                         }
                     }
 
-                    moveVector2 = moveVector2.nor() * cPhysics.speed * delta
+                    moveVector2 = moveVector2.nor() * cPhysics.speed
 
                     cPhysics.velocity = cPhysics.velocity + (moveVector2)
                 }
             }
 
             if (cPosition != null) {
-                cPhysics.velocity = cPhysics.velocity + (cPhysics.acceleration * delta)
+                cPhysics.velocity = cPhysics.velocity - (cPhysics.velocity * cPhysics.friction)
                 cPosition.position = cPosition.position + (cPhysics.velocity * delta)
             }
         }

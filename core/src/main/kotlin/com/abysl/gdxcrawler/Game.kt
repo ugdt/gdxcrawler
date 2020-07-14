@@ -1,6 +1,7 @@
 package com.abysl.gdxcrawler
 
 import com.abysl.gdxcrawler.physics.IPhysics
+import com.abysl.gdxcrawler.world.World
 import com.badlogic.gdx.Screen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
