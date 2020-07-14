@@ -12,10 +12,11 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer
 import ktx.graphics.*
 
 abstract class PixelPerfectScreen(protected val baseWidth: Int, protected val baseHeight: Int) : Screen {
-    protected val spriteBatch = SpriteBatch()
+    protected val fboSpriteBatch = SpriteBatch()
+    private val textureSpriteBatch = SpriteBatch()
     private val frameBuffer: FrameBuffer = FrameBuffer(Pixmap.Format.RGBA8888, baseWidth, baseHeight, false)
     protected val camera = OrthographicCamera()
-    private val viewport = IntFitViewport(baseWidth.toFloat(), baseHeight.toFloat(), camera)
+    private val viewport = IntFitViewport(baseWidth.toFloat(), baseHeight.toFloat(), OrthographicCamera())
 
     init {
         camera.setToOrtho(false, baseWidth.toFloat(), baseHeight.toFloat())
@@ -31,7 +32,7 @@ abstract class PixelPerfectScreen(protected val baseWidth: Int, protected val ba
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
             Gdx.gl.glEnable(GL20.GL_BLEND)
 
-            spriteBatch.use {
+            fboSpriteBatch.use {
                 draw(delta)
             }
         }
@@ -44,7 +45,7 @@ abstract class PixelPerfectScreen(protected val baseWidth: Int, protected val ba
         val sprite = Sprite(texture)
         sprite.flip(false, true)
 
-        spriteBatch.use {
+        textureSpriteBatch.use {
             sprite.draw(it)
         }
     }

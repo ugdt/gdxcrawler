@@ -12,7 +12,7 @@ import ktx.collections.*
 
 class World(private val tileSize: Int, private val chunkSideLength: Int, private val level: Level) {
     private val tiledMap = TiledMap()
-    private val baseLayer = TiledMapTileLayer(16384, 16384, tileSize, tileSize)
+    private val baseLayer = TiledMapTileLayer(4096, 4096, tileSize, tileSize)
     private val allChunks = ObjectMap<GridPoint2, Chunk>()
 
     init {

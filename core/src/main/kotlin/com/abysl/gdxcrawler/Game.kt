@@ -1,10 +1,6 @@
 package com.abysl.gdxcrawler
 
-import com.abysl.gdxcrawler.input.IInput
 import com.abysl.gdxcrawler.physics.IPhysics
-import com.abysl.gdxcrawler.input.InputEnum
-import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.Screen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -15,12 +11,11 @@ import ktx.async.newAsyncContext
 import kotlin.system.measureTimeMillis
 
 class Game : KtxGame<Screen>() {
-    private val physicsScope = CoroutineScope(newAsyncContext(2))
-    private val physicsTickRate = (1f / 60f) // 60 times per second
+    private val physicsScope = CoroutineScope(newAsyncContext(1))
+    private val physicsTickRate = (1f / 144f) // 120 times per second
     private var timeSinceLastTick = 0f
 
     private lateinit var physicsScreens: List<IPhysics>
-    private lateinit var inputScreens: List<IInput>
 
     val assetManager = AssetStorage()
 
@@ -28,43 +23,21 @@ class Game : KtxGame<Screen>() {
         addScreen(MainMenu())
         addScreen(TestScreen())
         addScreen(WorldScreen())
-        setScreen<WorldScreen>()
+        addScreen(ECSWorldScreen())
+        setScreen<ECSWorldScreen>()
 
         val tempPhysicsScreens = mutableListOf<IPhysics>()
-        val tempInputScreens = mutableListOf<IInput>()
 
         for (screen in screens.values()) {
             if (screen is IPhysics) {
                 tempPhysicsScreens.add(screen)
             }
-            if (screen is IInput) {
-                tempInputScreens.add(screen)
-            }
         }
 
         physicsScreens = tempPhysicsScreens.toList()
-        inputScreens = tempInputScreens.toList()
 
         physicsScope.launch {
             physicsLoop()
-        }
-    }
-
-    override fun render() {
-        super.render()
-
-        if (Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)) {
-            checkInput()
-        }
-    }
-
-    private fun checkInput() {
-        for (key in InputEnum.values()) {
-            if (Gdx.input.isKeyPressed(key.keyId)) {
-                for (inputScreen: IInput in inputScreens) {
-                    inputScreen.input(key)
-                }
-            }
         }
     }
 
