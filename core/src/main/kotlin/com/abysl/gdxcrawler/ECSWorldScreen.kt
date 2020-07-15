@@ -8,17 +8,28 @@ import com.abysl.gdxcrawler.ecs.systems.SEvent
 import com.abysl.gdxcrawler.ecs.systems.SPhysics
 import com.abysl.gdxcrawler.physics.IPhysics
 import com.abysl.gdxcrawler.utils.PixelPerfectRenderer
+import com.abysl.gdxcrawler.world.TileWorld
+import com.abysl.gdxcrawler.world.level.DesertLevel
 import com.artemis.ArchetypeBuilder
+import com.artemis.Entity
 import com.artemis.World
 import com.artemis.WorldConfigurationBuilder
 import com.artemis.managers.TagManager
 import com.badlogic.gdx.Screen
+import com.badlogic.gdx.math.GridPoint2
+import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.math.Vector3
+import ktx.math.*
+import kotlin.math.roundToInt
 
 class ECSWorldScreen : Screen, IPhysics {
     private val world: World
     private val playerId: Int
+    private val playerEntity: Entity
     private val tagManager: TagManager
-    private val pixelPerfect = PixelPerfectRenderer(320, 180)
+    private val pixelPerfectRenderer = PixelPerfectRenderer(320, 180)
+    private val tileWorld = TileWorld(16, 16, DesertLevel())
+    private val tileWorldRenderer = tileWorld.getRenderer(pixelPerfectRenderer.fboSpriteBatch)
 
     init {
         val config = WorldConfigurationBuilder()
@@ -26,22 +37,29 @@ class ECSWorldScreen : Screen, IPhysics {
                         SEvent(),
                         SPhysics(),
                         TagManager()
-                ).build()
+                )
+                .build()
+        config.register("tilemap", tileWorld.tiledMap)
         world = World(config)
 
         tagManager = world.getSystem(TagManager::class.java)
 
         val playerArchetype = getPlayerArchetype(ArchetypeBuilder(), world)
         playerId = world.create(playerArchetype)
-        initializePlayer(playerId, world, tagManager)
+        playerEntity = initializePlayer(playerId, world, tagManager)
+
+        tileWorldRenderer.setView(pixelPerfectRenderer.camera)
     }
 
-    private fun initializePlayer(playerId: Int, world: World, tagManager: TagManager) {
+    private fun initializePlayer(playerId: Int, world: World, tagManager: TagManager): Entity {
         tagManager.register("PLAYER", playerId)
 
-        val cPhysics = world.getEntity(playerId).getComponent(CPhysics::class.java)
+        val playerEntity = world.getEntity(playerId)
+        val cPhysics = playerEntity.getComponent(CPhysics::class.java)
         cPhysics.speed = 10
         cPhysics.friction = 0.05f
+
+        return playerEntity
     }
 
     override fun hide() {
@@ -51,11 +69,16 @@ class ECSWorldScreen : Screen, IPhysics {
     }
 
     override fun render(delta: Float) {
-        val playerEntity = world.getEntity(playerId)
         val playerTexture = playerEntity.getComponent(CTexture::class.java).texture
         val playerPosition = playerEntity.getComponent(CPosition::class.java).position
 
-        pixelPerfect.render { spriteBatch ->
+        val camera = pixelPerfectRenderer.camera
+        val offset = Vector3(8f, 8f, 0f)
+        camera.position.set(Vector3(playerPosition, 0f) + offset)
+        tileWorldRenderer.setView(pixelPerfectRenderer.camera)
+
+        pixelPerfectRenderer.render { spriteBatch ->
+            tileWorldRenderer.render()
             spriteBatch.draw(playerTexture, playerPosition.x, playerPosition.y)
         }
     }
@@ -67,7 +90,7 @@ class ECSWorldScreen : Screen, IPhysics {
     }
 
     override fun resize(width: Int, height: Int) {
-        pixelPerfect.resize(width, height)
+        pixelPerfectRenderer.resize(width, height)
     }
 
     override fun dispose() {
@@ -76,5 +99,8 @@ class ECSWorldScreen : Screen, IPhysics {
     override fun physics(delta: Float) {
         world.setDelta(delta)
         world.process()
+
+        val playerPosition = playerEntity.getComponent(CPosition::class.java).position
+        tileWorld.generateChunksAround(GridPoint2(playerPosition.x.toInt(), playerPosition.y.toInt()), 5)
     }
 }

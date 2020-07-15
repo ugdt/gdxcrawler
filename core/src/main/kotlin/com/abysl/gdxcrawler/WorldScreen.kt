@@ -1,13 +1,13 @@
 package com.abysl.gdxcrawler
 
 import com.abysl.gdxcrawler.utils.PixelPerfectRenderer
-import com.abysl.gdxcrawler.world.World
+import com.abysl.gdxcrawler.world.TileWorld
 import com.abysl.gdxcrawler.world.level.DesertLevel
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.math.GridPoint2
 
 class WorldScreen : Screen {
-    private val world = World(16, 16, DesertLevel())
+    private val world = TileWorld(16, 16, DesertLevel())
     private val pixelPerfectRenderer = PixelPerfectRenderer(320, 180)
     private val worldMapRenderer = world.getRenderer(pixelPerfectRenderer.fboSpriteBatch)
 

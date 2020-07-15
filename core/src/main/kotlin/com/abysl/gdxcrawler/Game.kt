@@ -1,7 +1,6 @@
 package com.abysl.gdxcrawler
 
 import com.abysl.gdxcrawler.physics.IPhysics
-import com.abysl.gdxcrawler.world.World
 import com.badlogic.gdx.Screen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -13,7 +12,7 @@ import kotlin.system.measureTimeMillis
 
 class Game : KtxGame<Screen>() {
     private val physicsScope = CoroutineScope(newAsyncContext(1))
-    private val physicsTickRate = (1f / 144f) // 120 times per second
+    private val physicsTickRate = (1f / 120f) // 120 times per second
     private var timeSinceLastTick = 0f
 
     private lateinit var physicsScreens: List<IPhysics>
