@@ -17,10 +17,8 @@ import com.artemis.WorldConfigurationBuilder
 import com.artemis.managers.TagManager
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.math.GridPoint2
-import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import ktx.math.*
-import kotlin.math.roundToInt
 
 class ECSWorldScreen : Screen, IPhysics {
     private val world: World
@@ -57,7 +55,7 @@ class ECSWorldScreen : Screen, IPhysics {
         val playerEntity = world.getEntity(playerId)
         val cPhysics = playerEntity.getComponent(CPhysics::class.java)
         cPhysics.speed = 10
-        cPhysics.friction = 0.05f
+        cPhysics.friction = 0.075f
 
         return playerEntity
     }
@@ -72,9 +70,6 @@ class ECSWorldScreen : Screen, IPhysics {
         val playerTexture = playerEntity.getComponent(CTexture::class.java).texture
         val playerPosition = playerEntity.getComponent(CPosition::class.java).position
 
-        val camera = pixelPerfectRenderer.camera
-        val offset = Vector3(8f, 8f, 0f)
-        camera.position.set(Vector3(playerPosition, 0f) + offset)
         tileWorldRenderer.setView(pixelPerfectRenderer.camera)
 
         pixelPerfectRenderer.render { spriteBatch ->
@@ -102,5 +97,10 @@ class ECSWorldScreen : Screen, IPhysics {
 
         val playerPosition = playerEntity.getComponent(CPosition::class.java).position
         tileWorld.generateChunksAround(GridPoint2(playerPosition.x.toInt(), playerPosition.y.toInt()), 5)
+
+        val camera = pixelPerfectRenderer.camera
+        val offset = Vector3(8f, 8f, 0f)
+        camera.position.set(Vector3(playerPosition, 0f) + offset)
+        camera.update()
     }
 }
