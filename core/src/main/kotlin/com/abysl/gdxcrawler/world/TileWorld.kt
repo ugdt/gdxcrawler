@@ -20,6 +20,7 @@ class TileWorld(private val tileSize: Int, private val chunkSideLength: Int, pri
         tiledMap.tileSets.addTileSet(level.tiledSet)
     }
 
+
     fun getRenderer(batch: Batch): BatchTiledMapRenderer {
         return PixelPerfectOrthoTiledMapRenderer(tiledMap, 1f, batch)
     }

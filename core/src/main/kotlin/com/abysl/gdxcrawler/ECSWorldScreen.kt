@@ -10,6 +10,7 @@ import com.abysl.gdxcrawler.physics.IPhysics
 import com.abysl.gdxcrawler.utils.PixelPerfectRenderer
 import com.abysl.gdxcrawler.world.TileWorld
 import com.abysl.gdxcrawler.world.level.DesertLevel
+import com.abysl.gdxcrawler.world.level.TutorialLevel
 import com.artemis.ArchetypeBuilder
 import com.artemis.Entity
 import com.artemis.World
@@ -26,7 +27,7 @@ class ECSWorldScreen : Screen, IPhysics {
     private val playerEntity: Entity
     private val tagManager: TagManager
     private val pixelPerfectRenderer = PixelPerfectRenderer(320, 180)
-    private val tileWorld = TileWorld(16, 16, DesertLevel())
+    private val tileWorld = TileWorld(16, 16, TutorialLevel())
     private val tileWorldRenderer = tileWorld.getRenderer(pixelPerfectRenderer.fboSpriteBatch)
 
     init {

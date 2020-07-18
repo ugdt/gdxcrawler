@@ -4,15 +4,14 @@ import com.abysl.gdxcrawler.physics.IPhysics
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import ktx.app.KtxGame
-import ktx.assets.async.AssetStorage
+import ktx.async.KtxAsync
 
 class Game : KtxGame<Screen>() {
     private val physicsTickRate = (1f / 100f) // 100 times per second
     private var accumulator = 0f
 
-    val assetManager = AssetStorage()
-
     override fun create() {
+        KtxAsync.initiate()
         addScreen(MainMenu())
         addScreen(TestScreen())
         addScreen(ECSWorldScreen())
