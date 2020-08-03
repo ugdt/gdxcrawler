@@ -45,20 +45,27 @@ class SPhysics : IteratingSystem() {
 
                     var moveVector2 = Vector2.Zero
 
-                    for (event in cEvents.events) {
-                        if (event is MoveEvent) {
-                            moveVector2 = moveVector2 + event.direction
+                    if (cEvents.events.isNotEmpty()) {
+                        for (event in cEvents.events) {
+                            if (event is MoveEvent) {
+                                moveVector2 = moveVector2 + event.direction
+                            }
                         }
+
+                        moveVector2 = moveVector2.nor() * cPhysics.speed
+
+                        if (cPhysics.velocity.len() < cPhysics.speed) {
+                            cPhysics.velocity = cPhysics.velocity + (moveVector2)
+                        }
+
+                        cPhysics.velocity.setAngle(moveVector2.angle())
+                    } else {
+                        cPhysics.velocity = cPhysics.velocity * 0.9f
                     }
-
-                    moveVector2 = moveVector2.nor() * cPhysics.speed
-
-                    cPhysics.velocity = cPhysics.velocity + (moveVector2)
                 }
             }
 
             if (cPosition != null) {
-                cPhysics.velocity = cPhysics.velocity - (cPhysics.velocity * cPhysics.friction)
                 cPosition.position = cPosition.position + (cPhysics.velocity * delta)
             }
         }

@@ -18,6 +18,7 @@ import com.artemis.WorldConfigurationBuilder
 import com.artemis.managers.TagManager
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.math.GridPoint2
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.math.Vector3
 import ktx.math.*
 
@@ -26,7 +27,7 @@ class ECSWorldScreen : Screen, IPhysics {
     private val playerId: Int
     private val playerEntity: Entity
     private val tagManager: TagManager
-    private val pixelPerfectRenderer = PixelPerfectRenderer(320, 180)
+    private val pixelPerfectRenderer = PixelPerfectRenderer(640, 360)
     private val tileWorld = TileWorld(16, 16, TutorialLevel())
     private val tileWorldRenderer = tileWorld.getRenderer(pixelPerfectRenderer.fboSpriteBatch)
 
@@ -55,8 +56,9 @@ class ECSWorldScreen : Screen, IPhysics {
 
         val playerEntity = world.getEntity(playerId)
         val cPhysics = playerEntity.getComponent(CPhysics::class.java)
-        cPhysics.speed = 10
-        cPhysics.friction = 0.075f
+        val cPosition = playerEntity.getComponent(CPosition::class.java)
+        cPosition.position = Vector2(0f, 0f)
+        cPhysics.speed = 1
 
         return playerEntity
     }
@@ -77,6 +79,8 @@ class ECSWorldScreen : Screen, IPhysics {
             tileWorldRenderer.render()
             spriteBatch.draw(playerTexture, playerPosition.x, playerPosition.y)
         }
+
+        pixelPerfectRenderer.camera.project(Vector3.Zero)
     }
 
     override fun pause() {
