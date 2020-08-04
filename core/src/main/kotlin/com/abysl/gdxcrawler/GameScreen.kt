@@ -2,53 +2,32 @@ package com.abysl.gdxcrawler
 
 import com.abysl.gdxcrawler.ecs.components.CPhysics
 import com.abysl.gdxcrawler.ecs.components.CPosition
-import com.abysl.gdxcrawler.ecs.components.CTexture
 import com.abysl.gdxcrawler.ecs.getPlayerArchetype
-import com.abysl.gdxcrawler.ecs.systems.SEvent
-import com.abysl.gdxcrawler.ecs.systems.SPhysics
 import com.abysl.gdxcrawler.physics.IPhysics
+import com.abysl.gdxcrawler.utils.GameWorld
 import com.abysl.gdxcrawler.utils.PixelPerfectRenderer
 import com.abysl.gdxcrawler.world.TileWorld
-import com.abysl.gdxcrawler.world.level.DesertLevel
 import com.abysl.gdxcrawler.world.level.TutorialLevel
 import com.artemis.ArchetypeBuilder
 import com.artemis.Entity
 import com.artemis.World
-import com.artemis.WorldConfigurationBuilder
 import com.artemis.managers.TagManager
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.math.GridPoint2
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.math.Vector3
-import ktx.math.*
 
-class ECSWorldScreen : Screen, IPhysics {
-    private val world: World
+class GameScreen : Screen, IPhysics {
+    private val tileWorld = TileWorld(16, 16, TutorialLevel())
+    private val world: World = World(GameWorld(tileWorld.tiledMap).build())
     private val playerId: Int
     private val playerEntity: Entity
-    private val tagManager: TagManager
-    private val pixelPerfectRenderer = PixelPerfectRenderer(640, 360)
-    private val tileWorld = TileWorld(16, 16, TutorialLevel())
-    private val tileWorldRenderer = tileWorld.getRenderer(pixelPerfectRenderer.fboSpriteBatch)
+    private val tagManager: TagManager = world.getSystem(TagManager::class.java)
+    private val worldRenderer = PixelPerfectRenderer(world, 20f, 11.25f, 16)
 
     init {
-        val config = WorldConfigurationBuilder()
-                .with(
-                        SEvent(),
-                        SPhysics(),
-                        TagManager()
-                )
-                .build()
-        config.register("tilemap", tileWorld.tiledMap)
-        world = World(config)
-
-        tagManager = world.getSystem(TagManager::class.java)
-
         val playerArchetype = getPlayerArchetype(ArchetypeBuilder(), world)
         playerId = world.create(playerArchetype)
         playerEntity = initializePlayer(playerId, world, tagManager)
-
-        tileWorldRenderer.setView(pixelPerfectRenderer.camera)
     }
 
     private fun initializePlayer(playerId: Int, world: World, tagManager: TagManager): Entity {
@@ -59,7 +38,6 @@ class ECSWorldScreen : Screen, IPhysics {
         val cPosition = playerEntity.getComponent(CPosition::class.java)
         cPosition.position = Vector2(0f, 0f)
         cPhysics.speed = 1
-
         return playerEntity
     }
 
@@ -70,17 +48,7 @@ class ECSWorldScreen : Screen, IPhysics {
     }
 
     override fun render(delta: Float) {
-        val playerTexture = playerEntity.getComponent(CTexture::class.java).texture
-        val playerPosition = playerEntity.getComponent(CPosition::class.java).position
-
-        tileWorldRenderer.setView(pixelPerfectRenderer.camera)
-
-        pixelPerfectRenderer.render { spriteBatch ->
-            tileWorldRenderer.render()
-            spriteBatch.draw(playerTexture, playerPosition.x, playerPosition.y)
-        }
-
-        pixelPerfectRenderer.camera.project(Vector3.Zero)
+        worldRenderer.render()
     }
 
     override fun pause() {
@@ -90,7 +58,8 @@ class ECSWorldScreen : Screen, IPhysics {
     }
 
     override fun resize(width: Int, height: Int) {
-        pixelPerfectRenderer.resize(width, height)
+        worldRenderer.resize(width, height)
+
     }
 
     override fun dispose() {
@@ -102,10 +71,5 @@ class ECSWorldScreen : Screen, IPhysics {
 
         val playerPosition = playerEntity.getComponent(CPosition::class.java).position
         tileWorld.generateChunksAround(GridPoint2(playerPosition.x.toInt(), playerPosition.y.toInt()), 5)
-
-        val camera = pixelPerfectRenderer.camera
-        val offset = Vector3(8f, 8f, 0f)
-        camera.position.set(Vector3(playerPosition, 0f) + offset)
-        camera.update()
     }
 }

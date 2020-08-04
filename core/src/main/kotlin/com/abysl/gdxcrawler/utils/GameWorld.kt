@@ -2,27 +2,23 @@ package com.abysl.gdxcrawler.utils
 
 import com.abysl.gdxcrawler.ecs.systems.SEvent
 import com.abysl.gdxcrawler.ecs.systems.SPhysics
-import com.artemis.World
 import com.artemis.WorldConfiguration
 import com.artemis.WorldConfigurationBuilder
 import com.artemis.managers.TagManager
+import com.badlogic.gdx.maps.tiled.TiledMap
 
-class GameWorld(tileMap: TiledMapTile) : World(worldConfig) {
-    companion object {
-        val worldConfig: WorldConfiguration
-
-        init {
-            val worldConfigBuilder = WorldConfigurationBuilder()
-                .with(
-                        SEvent(),
-                        SPhysics(),
-                        TagManager()
-                )
-
-            worldConfigBuilder.register()
-            worldConfig = worldConfigBuilder.build()
-        }
+class GameWorld(val tileMap: TiledMap) : WorldConfigurationBuilder() {
+    init {
+        with(
+                SEvent(),
+                SPhysics(),
+                TagManager()
+        )
     }
 
-    val tileMap = tileMap
+    override fun build(): WorldConfiguration {
+        val world = super.build()
+        world.register("tileMap", tileMap)
+        return world
+    }
 }
