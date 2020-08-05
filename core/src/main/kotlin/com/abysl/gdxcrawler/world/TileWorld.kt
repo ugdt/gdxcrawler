@@ -1,6 +1,5 @@
 package com.abysl.gdxcrawler.world
 
-import com.abysl.gdxcrawler.utils.PixelPerfectOrthoTiledMapRenderer
 import com.abysl.gdxcrawler.world.level.Level
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.maps.tiled.TiledMap
@@ -20,10 +19,6 @@ class TileWorld(tileSize: Int, private val chunkSideLength: Int, private val lev
         tiledMap.tileSets.addTileSet(level.tiledSet)
     }
 
-
-    fun getRenderer(batch: Batch): BatchTiledMapRenderer {
-        return PixelPerfectOrthoTiledMapRenderer(tiledMap, 1f, batch)
-    }
 
     fun generateChunksAround(position: GridPoint2, radius: Int) {
         val chunks = findChunksAround(position, radius)
