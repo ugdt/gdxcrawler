@@ -5,6 +5,7 @@ import com.abysl.gdxcrawler.ecs.components.CTexture
 import com.artemis.World
 import com.artemis.managers.TagManager
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Graphics
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -18,6 +19,7 @@ class PixelPerfectRenderer(val world: World, val baseWidth: Float, val baseHeigh
     private val cam: OrthographicCamera = world.getRegistered(OrthographicCamera::class.java)
             ?: OrthographicCamera(baseWidth, baseHeight)
     private val tagManager = world.getSystem(TagManager::class.java)
+    val graphics: Graphics = Gdx.graphics
 
     fun render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -32,38 +34,34 @@ class PixelPerfectRenderer(val world: World, val baseWidth: Float, val baseHeigh
         spriteBatch.use {
             it.draw(player.getComponent(CTexture::class.java).texture, pos.x, pos.y, 1f, 1f)
         }
-//        Gdx.app.postRunnable {
-//            if (Gdx.graphics.width % 2 != 0) {
-//                Gdx.graphics.setWindowedMode(Gdx.graphics.width - 1, Gdx.graphics.height)
-//            }
-//            if (Gdx.graphics.height % 2 != 0) {
-//                Gdx.graphics.setWindowedMode(Gdx.graphics.width, Gdx.graphics.height - 1)
-//            }
-//        }
     }
 
-    var tileMapRenderer = OrthogonalTiledMapRenderer(world.getRegistered(TiledMap::class.java), 1/16f)
-    fun renderMap(){
+    var tileMapRenderer = OrthogonalTiledMapRenderer(world.getRegistered(TiledMap::class.java), 1 / 16f)
+    fun renderMap() {
         tileMapRenderer.map = world.getRegistered<TiledMap>("tileMap")
         tileMapRenderer.setView(cam)
         tileMapRenderer.render()
     }
 
     fun resize(width: Int, height: Int) {
-
-
         // calculate the scale that gets closest to showing 20.0 x 11.25 tiles on the screen
         val widthScale: Int = (width.toFloat() / (baseWidth * tileSize)).roundToInt().coerceAtLeast(1)
         val heightScale: Int = (height.toFloat() / (baseHeight * tileSize)).roundToInt().coerceAtLeast(1)
         val scale: Int = maxOf(widthScale, heightScale)
         // scale the tiles by that amount
-        val tileFactor: Float = scale.toFloat() * tileSize
+        val tileFactor: Int = scale * tileSize
         // calculate the camera width needed with the proper scale to keep things pixel perfect
-        val deltaWidth: Float = (width - (baseWidth * tileFactor)) / tileFactor
+
+        var deltaWidth: Float = (width - (baseWidth * tileFactor).roundToInt()) / tileFactor.toFloat()
         // calculate the camera height needed to keep things pixel perfect
-        val deltaHeight: Float = (height - (baseHeight * tileFactor)) / tileFactor
-        println("width: $deltaWidth, height: $deltaHeight")
-        cam.viewportWidth = (baseWidth + deltaWidth).toFloat()
-        cam.viewportHeight = (baseHeight + deltaHeight).toFloat()
+        var deltaHeight: Float = (height - (baseHeight * tileFactor)) / tileFactor
+        cam.viewportWidth = (baseWidth + deltaWidth)
+        cam.viewportHeight = (baseHeight + deltaHeight)
+        if(width % 2 != 0 ){
+            graphics.setWindowedMode(width - 1, height)
+        }
+        if(height % 2 != 0 ){
+            graphics.setWindowedMode(width, height - 1)
+        }
     }
 }
