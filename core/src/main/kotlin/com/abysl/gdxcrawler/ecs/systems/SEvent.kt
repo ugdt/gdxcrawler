@@ -10,7 +10,6 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.math.Vector2
-import com.badlogic.gdx.utils.IntArray
 import com.badlogic.gdx.utils.IntMap
 import com.badlogic.gdx.utils.IntSet
 import ktx.collections.*

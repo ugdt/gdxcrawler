@@ -1,7 +1,7 @@
 package com.abysl.gdxcrawler.world.level
 
-import com.abysl.gdxcrawler.utils.noise2
 import com.abysl.gdxcrawler.utils.OpenSimplex2S
+import com.abysl.gdxcrawler.utils.noise2XBeforeY
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.math.GridPoint2
 
@@ -13,7 +13,7 @@ class DesertLevel : Level() {
     private val sandTileId = 244 // 16 * 15 + 3
 
     override fun generateCell(mapPosition: GridPoint2): TiledMapTileLayer.Cell {
-        val noise = openSimplex2S.noise2(mapPosition)
+        val noise = openSimplex2S.noise2XBeforeY(mapPosition)
         val tileId = if (noise > 0) sandTileId else waterTileId
 
         val cell = TiledMapTileLayer.Cell()

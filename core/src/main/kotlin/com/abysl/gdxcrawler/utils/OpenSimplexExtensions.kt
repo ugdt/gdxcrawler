@@ -18,3 +18,19 @@ fun OpenSimplex2S.noise2(x: Int, y: Int): Double {
 fun OpenSimplex2S.noise2(x: Float, y: Float): Double {
     return noise2(x.toDouble(), y.toDouble())
 }
+
+fun OpenSimplex2S.noise2XBeforeY(vector2: Vector2): Double {
+    return noise2XBeforeY(vector2.x, vector2.y)
+}
+
+fun OpenSimplex2S.noise2XBeforeY(gridPoint2: GridPoint2): Double {
+    return noise2XBeforeY(gridPoint2.x, gridPoint2.y)
+}
+
+fun OpenSimplex2S.noise2XBeforeY(x: Int, y: Int): Double {
+    return noise2XbeforeY(x.toDouble(), y.toDouble())
+}
+
+fun OpenSimplex2S.noise2XBeforeY(x: Float, y: Float): Double {
+    return noise2XbeforeY(x.toDouble(), y.toDouble())
+}

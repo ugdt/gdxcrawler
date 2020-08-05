@@ -6,20 +6,22 @@ import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.viewport.ScalingViewport
 
-class IntFitViewport(targetWidth: Float, targetHeight: Float, camera: Camera) : ScalingViewport(Scaling.fit, targetWidth, targetHeight, camera) {
+class IntFitViewport(targetWidth: Float, targetHeight: Float, camera: Camera, private val conversion: Int) : ScalingViewport(Scaling.fit, targetWidth, targetHeight, camera) {
     private companion object {
         private val temp: Vector2 = Vector2()
+        private const val BIAS = 0.2f
     }
 
     private fun applyIntScaling(sourceWidth: Float, sourceHeight: Float, targetWidth: Float, targetHeight: Float): Vector2 {
         val targetRatio = targetHeight / targetWidth
         val sourceRatio = sourceHeight / sourceWidth
 
-        val exactScale = if (targetRatio > sourceRatio) targetWidth / sourceWidth else targetHeight / sourceHeight
-        val scale = MathUtils.floor(exactScale)
+        val exactScale = if (targetRatio > sourceRatio) targetWidth / (sourceWidth * conversion) else targetHeight / (sourceHeight * conversion)
+        val scale = MathUtils.floor(exactScale + BIAS)
 
         temp.x = sourceWidth * scale
         temp.y = sourceHeight * scale
+
         return temp
     }
 
@@ -29,8 +31,8 @@ class IntFitViewport(targetWidth: Float, targetHeight: Float, camera: Camera) : 
         val viewportWidth = MathUtils.round(scaled.x)
         val viewportHeight = MathUtils.round(scaled.y)
 
-        setScreenBounds((screenWidth - viewportWidth) / 2, (screenHeight - viewportHeight) / 2,
-                viewportWidth, viewportHeight)
+        setScreenBounds((screenWidth - viewportWidth * conversion) / 2, (screenHeight - viewportHeight * conversion) / 2,
+                viewportWidth * conversion, viewportHeight * conversion)
 
         apply(centerCamera)
     }

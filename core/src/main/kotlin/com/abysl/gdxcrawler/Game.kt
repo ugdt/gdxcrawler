@@ -13,9 +13,8 @@ class Game : KtxGame<Screen>() {
     override fun create() {
         KtxAsync.initiate()
         addScreen(MainMenu())
-        addScreen(TestScreen())
-        addScreen(ECSWorldScreen())
-        setScreen<ECSWorldScreen>()
+        addScreen(GameScreen())
+        setScreen<GameScreen>()
     }
 
     override fun render() {
