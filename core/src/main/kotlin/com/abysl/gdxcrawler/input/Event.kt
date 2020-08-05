@@ -1,4 +1,3 @@
 package com.abysl.gdxcrawler.input
 
-abstract class Event {
-}
+abstract class Event

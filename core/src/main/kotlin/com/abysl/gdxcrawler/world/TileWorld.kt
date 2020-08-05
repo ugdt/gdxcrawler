@@ -1,10 +1,8 @@
 package com.abysl.gdxcrawler.world
 
 import com.abysl.gdxcrawler.world.level.Level
-import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
-import com.badlogic.gdx.maps.tiled.renderers.BatchTiledMapRenderer
 import com.badlogic.gdx.math.GridPoint2
 import com.badlogic.gdx.utils.ObjectMap
 import ktx.collections.*

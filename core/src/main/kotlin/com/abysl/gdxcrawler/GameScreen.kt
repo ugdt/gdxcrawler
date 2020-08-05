@@ -5,7 +5,7 @@ import com.abysl.gdxcrawler.ecs.components.CPosition
 import com.abysl.gdxcrawler.ecs.getPlayerArchetype
 import com.abysl.gdxcrawler.physics.IPhysics
 import com.abysl.gdxcrawler.utils.GameWorld
-import com.abysl.gdxcrawler.utils.PixelPerfectRenderer
+import com.abysl.gdxcrawler.utils.GameRenderer
 import com.abysl.gdxcrawler.world.TileWorld
 import com.abysl.gdxcrawler.world.level.TutorialLevel
 import com.artemis.ArchetypeBuilder
@@ -22,7 +22,7 @@ class GameScreen : Screen, IPhysics {
     private val playerId: Int
     private val playerEntity: Entity
     private val tagManager: TagManager = world.getSystem(TagManager::class.java)
-    private val worldRenderer = PixelPerfectRenderer(world, 20f, 11.25f, 16)
+    private val worldRenderer = GameRenderer(world, 20f, 11.25f, 16)
 
     init {
         val playerArchetype = getPlayerArchetype(ArchetypeBuilder(), world)
@@ -59,7 +59,6 @@ class GameScreen : Screen, IPhysics {
 
     override fun resize(width: Int, height: Int) {
         worldRenderer.resize(width, height)
-
     }
 
     override fun dispose() {

@@ -13,10 +13,10 @@ import ktx.math.*
 
 @All(CPhysics::class)
 class SPhysics : IteratingSystem() {
-    lateinit var mPhysics: ComponentMapper<CPhysics>
-    lateinit var mPosition: ComponentMapper<CPosition>
-    lateinit var mEvents: ComponentMapper<CEvents>
-    lateinit var tagManager: TagManager
+    private lateinit var mPhysics: ComponentMapper<CPhysics>
+    private lateinit var mPosition: ComponentMapper<CPosition>
+    private lateinit var mEvents: ComponentMapper<CEvents>
+    private lateinit var tagManager: TagManager
 
     private var ePlayer = -1
     private var eEvents = -1

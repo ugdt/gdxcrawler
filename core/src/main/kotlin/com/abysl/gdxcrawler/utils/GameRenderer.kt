@@ -5,7 +5,6 @@ import com.abysl.gdxcrawler.ecs.components.CTexture
 import com.artemis.World
 import com.artemis.managers.TagManager
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Graphics
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -14,15 +13,15 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
 import ktx.graphics.use
 import kotlin.math.roundToInt
 
-class PixelPerfectRenderer(val world: World, val baseWidth: Float, val baseHeight: Float, val tileSize: Int) {
+class GameRenderer(val world: World, private val baseWidth: Float, private val baseHeight: Float, private val tileSize: Int) {
     private val spriteBatch = SpriteBatch()
     private val cam: OrthographicCamera = world.getRegistered(OrthographicCamera::class.java)
             ?: OrthographicCamera(baseWidth, baseHeight)
     private val tagManager = world.getSystem(TagManager::class.java)
-    val graphics: Graphics = Gdx.graphics
+    private var tileMapRenderer = OrthogonalTiledMapRenderer(world.getRegistered(TiledMap::class.java), 1 / 16f)
 
     fun render() {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         val player = tagManager.getEntity("PLAYER")
         val pos = player.getComponent(CPosition::class.java).position
 
@@ -30,14 +29,14 @@ class PixelPerfectRenderer(val world: World, val baseWidth: Float, val baseHeigh
         cam.update()
 
         renderMap()
+
         spriteBatch.projectionMatrix = cam.combined
         spriteBatch.use {
             it.draw(player.getComponent(CTexture::class.java).texture, pos.x, pos.y, 1f, 1f)
         }
     }
 
-    var tileMapRenderer = OrthogonalTiledMapRenderer(world.getRegistered(TiledMap::class.java), 1 / 16f)
-    fun renderMap() {
+    private fun renderMap() {
         tileMapRenderer.map = world.getRegistered<TiledMap>("tileMap")
         tileMapRenderer.setView(cam)
         tileMapRenderer.render()
@@ -49,19 +48,21 @@ class PixelPerfectRenderer(val world: World, val baseWidth: Float, val baseHeigh
         val heightScale: Int = (height.toFloat() / (baseHeight * tileSize)).roundToInt().coerceAtLeast(1)
         val scale: Int = maxOf(widthScale, heightScale)
         // scale the tiles by that amount
-        val tileFactor: Int = scale * tileSize
+        val tileWidthPixels: Int = scale * tileSize
         // calculate the camera width needed with the proper scale to keep things pixel perfect
 
-        var deltaWidth: Float = (width - (baseWidth * tileFactor).roundToInt()) / tileFactor.toFloat()
+        val deltaWidth: Float = (width - (baseWidth * tileWidthPixels).roundToInt()) / tileWidthPixels.toFloat()
         // calculate the camera height needed to keep things pixel perfect
-        var deltaHeight: Float = (height - (baseHeight * tileFactor)) / tileFactor
+        val deltaHeight: Float = (height - (baseHeight * tileWidthPixels)) / tileWidthPixels
         cam.viewportWidth = (baseWidth + deltaWidth)
         cam.viewportHeight = (baseHeight + deltaHeight)
-        if(width % 2 != 0 ){
-            graphics.setWindowedMode(width - 1, height)
+
+        if (width % 2 != 0 ) {
+            Gdx.graphics.setWindowedMode(width - 1, height)
         }
-        if(height % 2 != 0 ){
-            graphics.setWindowedMode(width, height - 1)
+
+        if (height % 2 != 0 ) {
+            Gdx.graphics.setWindowedMode(width, height - 1)
         }
     }
 }

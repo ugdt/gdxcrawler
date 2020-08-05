@@ -7,7 +7,7 @@ import com.artemis.WorldConfigurationBuilder
 import com.artemis.managers.TagManager
 import com.badlogic.gdx.maps.tiled.TiledMap
 
-class GameWorld(val tileMap: TiledMap) : WorldConfigurationBuilder() {
+class GameWorld(private val tileMap: TiledMap) : WorldConfigurationBuilder() {
     init {
         with(
                 SEvent(),
