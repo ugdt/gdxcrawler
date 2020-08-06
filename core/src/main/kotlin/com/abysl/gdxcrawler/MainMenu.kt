@@ -2,9 +2,7 @@ package com.abysl.gdxcrawler
 
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.g2d.Sprite
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
-import ktx.graphics.use
 
 class MainMenu : Screen {
     private val texture = TextureAtlas()
