@@ -9,7 +9,6 @@ import ktx.graphics.use
 class MainMenu : Screen {
     private val texture = TextureAtlas()
     private val sprite = Sprite()
-    private val batch = SpriteBatch()
 
     override fun hide() {
     }
@@ -18,9 +17,6 @@ class MainMenu : Screen {
     }
 
     override fun render(delta: Float) {
-        batch.use {
-
-        }
     }
 
     override fun pause() {
