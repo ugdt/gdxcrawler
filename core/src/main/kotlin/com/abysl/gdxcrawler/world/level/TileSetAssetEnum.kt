@@ -2,5 +2,6 @@ package com.abysl.gdxcrawler.world.level
 
 enum class TileSetAssetEnum(val filePath: String) {
     TUTORIAL("levels/tutoriallevel/tutorial.tsx"),
-    DESERT("levels/desertlevel/desert.tsx")
+    DESERT("levels/desertlevel/desert.tsx"),
+    DUNGEON("levels/dungeonlevel/dungeonlevel.tsx")
 }
