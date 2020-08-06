@@ -21,7 +21,7 @@ object Lwjgl3Launcher {
             configuration.setTitle("gdxcrawler")
             configuration.setWindowedMode(1280, 720)
             configuration.setWindowIcon("libgdx128.png", "libgdx64.png", "libgdx32.png", "libgdx16.png")
-//            configuration.useVsync(false)
+            configuration.useVsync(false)
             return configuration
         }
 }
