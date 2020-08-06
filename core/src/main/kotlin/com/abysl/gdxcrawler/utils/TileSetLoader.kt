@@ -30,7 +30,7 @@ import com.badlogic.gdx.math.Polyline
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.utils.GdxRuntimeException
 import com.badlogic.gdx.utils.XmlReader
-import ktx.collections.*
+import ktx.collections.GdxIntArray
 import java.util.*
 
 class TileSetLoader(resolver: FileHandleResolver) : AsynchronousAssetLoader<TiledMapTileSet, TileSetLoader.TileSetParameters>(resolver) {

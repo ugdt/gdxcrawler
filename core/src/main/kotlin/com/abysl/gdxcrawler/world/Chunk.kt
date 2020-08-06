@@ -1,9 +1,9 @@
 package com.abysl.gdxcrawler.world
 
 import com.abysl.gdxcrawler.world.level.Level
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell
 import com.badlogic.gdx.math.GridPoint2
-import ktx.collections.*
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell as Cell
+import ktx.collections.GdxArray
 
 class Chunk(private val sideLength: Int, private val level: Level, val tileMapPosition: GridPoint2) {
     private val tiles: GdxArray<GdxArray<Cell>> = GdxArray(false, sideLength)

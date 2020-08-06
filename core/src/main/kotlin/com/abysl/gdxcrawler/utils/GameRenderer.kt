@@ -57,11 +57,11 @@ class GameRenderer(val world: World, private val baseWidth: Float, private val b
         cam.viewportWidth = (baseWidth + deltaWidth)
         cam.viewportHeight = (baseHeight + deltaHeight)
 
-        if (width % 2 != 0 ) {
+        if (width % 2 != 0) {
             Gdx.graphics.setWindowedMode(width - 1, height)
         }
 
-        if (height % 2 != 0 ) {
+        if (height % 2 != 0) {
             Gdx.graphics.setWindowedMode(width, height - 1)
         }
     }

@@ -49,7 +49,7 @@ class TileWorld(tileSize: Int, private val chunkSideLength: Int, private val lev
             for (y in (centerChunkPosition.y - radius)..(centerChunkPosition.y + radius)) {
                 val chunkPosition = GridPoint2(x, y)
 
-                if (! allChunks.containsKey(chunkPosition)) {
+                if (!allChunks.containsKey(chunkPosition)) {
                     allChunks[chunkPosition] = Chunk(chunkSideLength, level, multiplyPosByChunkLength(chunkPosition))
                 }
 

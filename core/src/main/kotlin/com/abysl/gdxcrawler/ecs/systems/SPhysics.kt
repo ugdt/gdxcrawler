@@ -9,7 +9,8 @@ import com.artemis.annotations.All
 import com.artemis.managers.TagManager
 import com.artemis.systems.IteratingSystem
 import com.badlogic.gdx.math.Vector2
-import ktx.math.*
+import ktx.math.plus
+import ktx.math.times
 
 @All(CPhysics::class)
 class SPhysics : IteratingSystem() {
