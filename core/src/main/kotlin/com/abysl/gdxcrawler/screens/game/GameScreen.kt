@@ -15,11 +15,11 @@ import com.artemis.World
 import com.artemis.managers.TagManager
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
+import com.badlogic.gdx.Screen
 import com.badlogic.gdx.math.GridPoint2
 import com.badlogic.gdx.math.Vector2
-import ktx.app.KtxScreen
 
-class GameScreen : KtxScreen, IPhysics {
+class GameScreen : Screen, IPhysics {
     private val tileWorld = TileWorld(16, 16, TutorialLevel())
     private val world: World = World(GameWorld(tileWorld.tiledMap).build())
     private val playerId: Int

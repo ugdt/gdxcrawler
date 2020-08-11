@@ -3,9 +3,8 @@ package com.abysl.gdxcrawler.screens.mainmenu
 import com.badlogic.gdx.Screen
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
-import ktx.app.KtxScreen
 
-class MainMenu : KtxScreen {
+class MainMenu : Screen {
     private val texture = TextureAtlas()
     private val sprite = Sprite()
 
