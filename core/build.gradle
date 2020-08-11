@@ -16,6 +16,8 @@ dependencies {
     api "io.github.libktx:ktx-math:$ktxVersion"
     api "io.github.libktx:ktx-actors:$ktxVersion"
     api "io.github.libktx:ktx-scene2d:$ktxVersion"
+    api "io.github.libktx:ktx-vis:$ktxVersion"
+    api "io.github.libktx:ktx-vis-style:$ktxVersion"
     api "io.github.libktx:ktx-preferences:$ktxVersion"
     api "io.github.libktx:ktx-app:$ktxVersion"
     api "io.github.libktx:ktx-assets:$ktxVersion"

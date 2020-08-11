@@ -1,12 +1,14 @@
 package com.abysl.gdxcrawler
 
 import com.abysl.gdxcrawler.physics.IPhysics
+import com.abysl.gdxcrawler.screens.game.GameScreen
+import com.abysl.gdxcrawler.screens.mainmenu.MainMenu
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Screen
 import ktx.app.KtxGame
+import ktx.app.KtxScreen
 import ktx.async.KtxAsync
 
-class Game : KtxGame<Screen>() {
+class Game : KtxGame<KtxScreen>() {
     private val physicsTickRate = (1f / 100f) // 100 times per second
     private var accumulator = 0f
 

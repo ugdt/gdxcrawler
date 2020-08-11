@@ -1,8 +1,9 @@
-package com.abysl.gdxcrawler
+package com.abysl.gdxcrawler.screens.game
 
 import com.abysl.gdxcrawler.ecs.components.CPhysics
 import com.abysl.gdxcrawler.ecs.components.CPosition
 import com.abysl.gdxcrawler.ecs.getPlayerArchetype
+import com.abysl.gdxcrawler.ecs.systems.SEvent
 import com.abysl.gdxcrawler.physics.IPhysics
 import com.abysl.gdxcrawler.utils.GameRenderer
 import com.abysl.gdxcrawler.utils.GameWorld
@@ -12,22 +13,29 @@ import com.artemis.ArchetypeBuilder
 import com.artemis.Entity
 import com.artemis.World
 import com.artemis.managers.TagManager
-import com.badlogic.gdx.Screen
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.math.GridPoint2
 import com.badlogic.gdx.math.Vector2
+import ktx.app.KtxScreen
 
-class GameScreen : Screen, IPhysics {
+class GameScreen : KtxScreen, IPhysics {
     private val tileWorld = TileWorld(16, 16, TutorialLevel())
     private val world: World = World(GameWorld(tileWorld.tiledMap).build())
     private val playerId: Int
     private val playerEntity: Entity
     private val tagManager: TagManager = world.getSystem(TagManager::class.java)
-    private val worldRenderer = GameRenderer(world, 20f, 11.25f, 16)
+    private val gameRenderer = GameRenderer(world, 20f, 11.25f, 16)
+    private val hud = GameHud()
+    private val multiplexer = InputMultiplexer()
 
     init {
         val playerArchetype = getPlayerArchetype(ArchetypeBuilder(), world)
         playerId = world.create(playerArchetype)
         playerEntity = initializePlayer(playerId, world, tagManager)
+        multiplexer.addProcessor(hud)
+        multiplexer.addProcessor(world.getSystem(SEvent::class.java))
+        Gdx.input.inputProcessor = multiplexer
     }
 
     private fun initializePlayer(playerId: Int, world: World, tagManager: TagManager): Entity {
@@ -48,7 +56,8 @@ class GameScreen : Screen, IPhysics {
     }
 
     override fun render(delta: Float) {
-        worldRenderer.render()
+        gameRenderer.render()
+        hud.draw()
     }
 
     override fun pause() {
@@ -58,10 +67,14 @@ class GameScreen : Screen, IPhysics {
     }
 
     override fun resize(width: Int, height: Int) {
-        worldRenderer.resize(width, height)
+        gameRenderer.update(width, height)
+        hud.viewport.update(width, height)
     }
 
     override fun dispose() {
+        gameRenderer.dispose()
+        world.dispose()
+        hud.dispose()
     }
 
     override fun physics(delta: Float) {

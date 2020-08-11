@@ -38,8 +38,6 @@ class SEvent : BaseSystem(), InputProcessor {
 
         val tagManager = world.getSystem(TagManager::class.java)
         tagManager.register("EVENTS", entity)
-
-        Gdx.input.inputProcessor = this
     }
 
     override fun begin() {

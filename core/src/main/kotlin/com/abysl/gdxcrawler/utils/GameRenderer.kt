@@ -42,7 +42,7 @@ class GameRenderer(val world: World, private val baseWidth: Float, private val b
         tileMapRenderer.render()
     }
 
-    fun resize(width: Int, height: Int) {
+    fun update(width: Int, height: Int) {
         // calculate the scale that gets closest to showing 20.0 x 11.25 tiles on the screen
         val widthScale: Int = (width.toFloat() / (baseWidth * tileSize)).roundToInt().coerceAtLeast(1)
         val heightScale: Int = (height.toFloat() / (baseHeight * tileSize)).roundToInt().coerceAtLeast(1)
@@ -64,5 +64,10 @@ class GameRenderer(val world: World, private val baseWidth: Float, private val b
         if (height % 2 != 0) {
             Gdx.graphics.setWindowedMode(width, height - 1)
         }
+    }
+
+    fun dispose(){
+        tileMapRenderer.dispose()
+        spriteBatch.dispose()
     }
 }
