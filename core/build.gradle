@@ -16,8 +16,11 @@ dependencies {
     api "io.github.libktx:ktx-math:$ktxVersion"
     api "io.github.libktx:ktx-actors:$ktxVersion"
     api "io.github.libktx:ktx-scene2d:$ktxVersion"
-    api "io.github.libktx:ktx-vis:$ktxVersion"
-    api "io.github.libktx:ktx-vis-style:$ktxVersion"
+    // Uncommenting breaks
+//    api "io.github.libktx:ktx-vis:$ktxVersion"
+//    api "io.github.libktx:ktx-vis-style:$ktxVersion"
+    // Also breaks
+    compile "com.kotcrab.vis:vis-ui:1.4.6"
     api "io.github.libktx:ktx-preferences:$ktxVersion"
     api "io.github.libktx:ktx-app:$ktxVersion"
     api "io.github.libktx:ktx-assets:$ktxVersion"
