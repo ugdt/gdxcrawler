@@ -6,6 +6,7 @@ import kotlin.random.Random;
 
 class Floor (var zLevel: Int){      //floors have a z level to keep track of what we're rendering at any time
     var rooms = ArrayList<Room>()
+    var gridsize = 20
 
     fun generateRooms (numberOfRooms: Int): ArrayList<Room>{
         var generatedRooms = ArrayList<Room>()
@@ -37,32 +38,56 @@ class Floor (var zLevel: Int){      //floors have a z level to keep track of wha
             val offset1 = Random.nextInt(-3,4)  //for an offset that shifts what "angle" the room is at relative to its parent
             val offset2 = Random.nextInt(1,7)   //for an offset that shifts how close the room is relative to its parent-
                                                           // notably, it cannot be a distance of 0 from its parent
+                                                            //may not need offset2 anymore...
+
+            //make variables for values that we're going to be using often
+            val x = r.origin.x
+            val y = r.origin.y
+            val g = gridsize
+            val p = r.position.x
+            val q = r.position.y
 
             when (indexOfNeighbors)
             {
                 0-> {   //generate a Room to the North
                     generatedRooms[indexOfList].neighbors[0] = 1
                     System.out.println("creating new NORTH ROOM")
+                    val newOrigin = GridPoint2(x + g*(p) + offset1, y + g*(q+1) + offset1)  //this calculates the origin
                     return Room(GridPoint2(r.origin.x + offset1, r.origin.y + randomHeight + offset2), GridPoint2(randomWidth, randomHeight),
                             intArrayOf(0, 1, 0, 0), GridPoint2(r.position.x, r.position.y + 1))
+                    //checkSouth
+                    //checkEast
+                    //checkWest
                     }
                 1-> {   //generate a Room to the South
                     generatedRooms[indexOfList].neighbors[1] = 1
                     System.out.println("creating new SOUTH ROOM")
+                    val newOrigin = GridPoint2(x + g*(p) + offset1, y + g*(q-1) + offset1)  //this calculates the origin
                     return Room(GridPoint2(r.origin.x + offset1, r.origin.y - randomHeight - offset2), GridPoint2(randomWidth, randomHeight),
                             intArrayOf(1, 0, 0, 0), GridPoint2(r.position.x, r.position.y - 1))
+                    //checkNorth
+                    //checkEast
+                    //checkWest
                 }
                 2-> {   //generate a Room to the East
                     generatedRooms[indexOfList].neighbors[2] = 1
                     System.out.println("creating new EAST ROOM")
+                    val newOrigin = GridPoint2(x + g*(p+1) + offset1, y + g*(q) + offset1)  //this calculates the origin
                     return Room(GridPoint2(r.origin.x + randomWidth + offset2, r.origin.y + offset1), GridPoint2(randomWidth, randomHeight),
                             intArrayOf(0, 0, 0, 1), GridPoint2(r.position.x + 1, r.position.y))
+                    //checkNorth
+                    //checkSouth
+                    //checkWest
                 }
                 3-> {   //generate a Room to the West
                     generatedRooms[indexOfList].neighbors[3] = 1
                     System.out.println("creating new WEST ROOM")
+                    val newOrigin = GridPoint2(x + g*(p-1) + offset1, y + g*(q+1) + offset1)  //this calculates the origin
                     return Room(GridPoint2(r.origin.x - randomWidth - offset2, r.origin.y + offset1), GridPoint2(randomWidth, randomHeight),
                             intArrayOf(0, 0, 1, 0), GridPoint2(r.position.x - 1, r.position.y + 1))
+                    //checkNorth
+                    //checkSouth
+                    //checkEast
                 }
             }
         }

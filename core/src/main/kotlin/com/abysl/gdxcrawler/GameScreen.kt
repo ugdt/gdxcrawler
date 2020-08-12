@@ -7,6 +7,7 @@ import com.abysl.gdxcrawler.physics.IPhysics
 import com.abysl.gdxcrawler.utils.GameRenderer
 import com.abysl.gdxcrawler.utils.GameWorld
 import com.abysl.gdxcrawler.world.TileWorld
+import com.abysl.gdxcrawler.world.level.DungeonLevel
 import com.abysl.gdxcrawler.world.level.TutorialLevel
 import com.artemis.ArchetypeBuilder
 import com.artemis.Entity
@@ -17,7 +18,7 @@ import com.badlogic.gdx.math.GridPoint2
 import com.badlogic.gdx.math.Vector2
 
 class GameScreen : Screen, IPhysics {
-    private val tileWorld = TileWorld(16, 16, TutorialLevel())
+    private val tileWorld = TileWorld(16, 16, DungeonLevel())
     private val world: World = World(GameWorld(tileWorld.tiledMap).build())
     private val playerId: Int
     private val playerEntity: Entity
@@ -36,8 +37,8 @@ class GameScreen : Screen, IPhysics {
         val playerEntity = world.getEntity(playerId)
         val cPhysics = playerEntity.getComponent(CPhysics::class.java)
         val cPosition = playerEntity.getComponent(CPosition::class.java)
-        cPosition.position = Vector2(0f, 0f)
-        cPhysics.speed = 1
+        cPosition.position = Vector2(2048f, 2048f)
+        cPhysics.speed = 20
         return playerEntity
     }
 

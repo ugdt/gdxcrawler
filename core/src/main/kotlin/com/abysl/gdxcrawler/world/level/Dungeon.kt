@@ -11,7 +11,7 @@ class Dungeon {
         for (i in 1..numberOfFloors){
             val new = Floor(i-1)        //the zLevel of the "highest/first" floor is 0, increasing as you descend
             System.out.println("new FLOOR created")
-            new.rooms = new.generateRooms(5) //HARDCODED: this should eventually be changed to something like generateRooms(Random.nextInt(10,21))
+            new.rooms = new.generateRooms(7) //HARDCODED: this should eventually be changed to something like generateRooms(Random.nextInt(10,21))
             generatedFloors.add(new)
         }
         System.out.println("new floors created- returning a list of " + generatedFloors.size + " floors")
