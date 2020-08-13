@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.GridPoint2
 import com.badlogic.gdx.math.Rectangle;
 
 open class Room (var origin: GridPoint2 = GridPoint2(0,0), var size: GridPoint2 = GridPoint2(0,0),
-                 var neighbors: IntArray = intArrayOf(0,0,0,0), var position: GridPoint2 = GridPoint2(0,0)){
+                 var neighbors: IntArray = intArrayOf(0,0,0,0), var position: GridPoint2 = GridPoint2(0,0)){    //neighbors = (N,S,E,W)
 
     var walls = Rectangle()
     var inside = Rectangle()
