@@ -69,6 +69,6 @@ class GameScreen : Screen, IPhysics {
         world.process()
 
         val playerPosition = playerEntity.getComponent(CPosition::class.java).position
-        tileWorld.generateChunksAround(GridPoint2(playerPosition.x.toInt(), playerPosition.y.toInt()), 5)
+        tileWorld.getChunksAround(GridPoint2(playerPosition.x.toInt(), playerPosition.y.toInt()), 5)
     }
 }
