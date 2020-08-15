@@ -10,7 +10,7 @@ import ktx.scene2d.scene2d
 class GameHud: Stage(ScreenViewport()) {
     init {
         this.actors {
-            healthBar()
+//            healthBar()
         }
     }
 
