@@ -1,6 +1,7 @@
 package com.abysl.gdxcrawler.world
 
 import com.abysl.gdxcrawler.world.level.Level
+import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell
 import com.badlogic.gdx.math.GridPoint2
 import ktx.collections.GdxArray
@@ -40,5 +41,9 @@ class Chunk(private val sideLength: Int, private val level: Level, val tileMapPo
 
     fun getTiles(): List<List<Cell>> {
         return tilesToList(tiles)
+    }
+
+    fun getTilemap(): TiledMap {
+        return TiledMap()
     }
 }
