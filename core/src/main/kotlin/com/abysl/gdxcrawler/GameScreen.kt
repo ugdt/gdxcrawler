@@ -22,7 +22,7 @@ class GameScreen : Screen, IPhysics {
     private val playerId: Int
     private val playerEntity: Entity
     private val tagManager: TagManager = world.getSystem(TagManager::class.java)
-    private val worldRenderer = GameRenderer(world, tileWorld, 20f, 11.25f, 16)
+    private val worldRenderer = GameRenderer(world, tileWorld, 80f, 45f, 16)
 
     init {
         val playerArchetype = getPlayerArchetype(ArchetypeBuilder(), world)
@@ -37,7 +37,7 @@ class GameScreen : Screen, IPhysics {
         val cPhysics = playerEntity.getComponent(CPhysics::class.java)
         val cPosition = playerEntity.getComponent(CPosition::class.java)
         cPosition.position = Vector2(0f, 0f)
-        cPhysics.speed = 1
+        cPhysics.speed = 100
         return playerEntity
     }
 
@@ -69,6 +69,7 @@ class GameScreen : Screen, IPhysics {
         world.process()
 
         val playerPosition = playerEntity.getComponent(CPosition::class.java).position
-        tileWorld.setActiveChunks(tileWorld.getChunksAround(GridPoint2(playerPosition.x.toInt(), playerPosition.y.toInt()), 1))
+        val gridPosition = GridPoint2(playerPosition.x.toInt(), playerPosition.y.toInt())
+        tileWorld.setActiveChunks(tileWorld.getChunksAround(tileWorld.worldToChunk(gridPosition)))
     }
 }

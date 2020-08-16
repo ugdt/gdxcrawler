@@ -2,6 +2,7 @@ package com.abysl.gdxcrawler.world
 
 import com.abysl.gdxcrawler.world.level.Level
 import com.badlogic.gdx.math.GridPoint2
+import kotlin.math.floor
 
 /**
  * @property chunkSize size of a chunk in tiles
@@ -49,6 +50,12 @@ class TileWorld(private val chunkSize: Int, private val level: Level) {
         }
     }
 
+    fun worldToChunk(worldPosition: GridPoint2): GridPoint2{
+        val size = chunkSize.toFloat()
+        val res = GridPoint2(floor(worldPosition.x / size).toInt(), floor(worldPosition.y / size).toInt())
+        return res
+    }
+
     /**
      * @param center
      * @param radius
@@ -57,6 +64,10 @@ class TileWorld(private val chunkSize: Int, private val level: Level) {
     private fun getPointsAround(center: GridPoint2, radius: Int = 1): List<GridPoint2> {
         val xs = (center.x - radius)..(center.x + radius)
         val ys = (center.y - radius)..(center.y + radius)
-        return xs.zip(ys).map { GridPoint2(it.first, it.second) }
+        val res = xs.flatMap { x -> ys.map { y -> GridPoint2(x, y) } }
+//        println(res.size)
+//        res.forEach { println("${it.x}, ${it.y}") }
+//        println("---------------")
+        return res
     }
 }

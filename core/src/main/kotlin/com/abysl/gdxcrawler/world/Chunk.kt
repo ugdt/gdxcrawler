@@ -15,7 +15,7 @@ import ktx.tiled.property
  * @property tileMap
  * @property active determines whether the chunk is rendered and updated
  */
-class Chunk(val position: GridPoint2, val size: Int, val tileMap: TiledMap, var active: Boolean = false) {
+class Chunk(val position: GridPoint2, val size: Int, val tileMap: TiledMap, var active: Boolean = true) {
     /**
      * Updates the chunk state
      * @param delta

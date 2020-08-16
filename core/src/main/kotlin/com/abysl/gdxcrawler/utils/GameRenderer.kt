@@ -15,6 +15,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.maps.MapLayers
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
+import com.badlogic.gdx.math.Matrix3
+import com.badlogic.gdx.math.Matrix4
+import com.badlogic.gdx.math.Vector3
 import ktx.graphics.use
 import ktx.log.info
 import ktx.tiled.propertyOrNull
@@ -35,10 +38,11 @@ class GameRenderer(val world: World, val tileWorld: TileWorld, private val baseW
         cam.position.set(pos.x, pos.y, 0f)
         cam.update()
 
-        spriteBatch.projectionMatrix = cam.combined
         val entities: IntBag = world.aspectSubscriptionManager.get(entityAspect).entities
         val chunks: List<Chunk> = tileWorld.getActiveChunks()
+        spriteBatch.projectionMatrix = cam.combined
         renderChunks(chunks)
+        spriteBatch.projectionMatrix = cam.combined
         renderEntities(entities)
     }
 
@@ -55,13 +59,16 @@ class GameRenderer(val world: World, val tileWorld: TileWorld, private val baseW
             }
         }
     }
-    fun renderChunks(chunks: List<Chunk>){
-            for (chunk in chunks) {
-                val renderer = OrthogonalTiledMapRenderer(chunk.tileMap, 1f / tileSize, spriteBatch)
 
-                renderer.setView(cam.combined, chunk.position.x * chunk.size.toFloat(), chunk.position.y * chunk.size.toFloat(), chunk.size.toFloat(), chunk.size.toFloat())
-                renderer.render()
-            }
+    fun renderChunks(chunks: List<Chunk>){
+        for (chunk in chunks) {
+            val renderer = OrthogonalTiledMapRenderer(chunk.tileMap, 1f / tileSize, spriteBatch)
+            val size = chunk.size.toFloat()
+            val c = Vector3(chunk.position.x * size, chunk.position.y * size, 0f)
+            val matrix = Matrix4(cam.combined).translate(c.x, c.y, 0f)
+            renderer.setView(matrix, 0f, 0f, size, size)
+            renderer.render()
+        }
     }
 
     fun renderDepth(depth: Int, chunks: List<Chunk>, entities: IntArray) {
