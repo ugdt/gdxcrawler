@@ -17,12 +17,12 @@ import com.badlogic.gdx.math.GridPoint2
 import com.badlogic.gdx.math.Vector2
 
 class GameScreen : Screen, IPhysics {
-    private val tileWorld = TileWorld(16, 16, TutorialLevel())
-    private val world: World = World(GameWorld(tileWorld.tiledMap).build())
+    private val tileWorld = TileWorld(32, TutorialLevel())
+    private val world: World = World(GameWorld().build())
     private val playerId: Int
     private val playerEntity: Entity
     private val tagManager: TagManager = world.getSystem(TagManager::class.java)
-    private val worldRenderer = GameRenderer(world, 20f, 11.25f, 16)
+    private val worldRenderer = GameRenderer(world, tileWorld, 20f, 11.25f, 16)
 
     init {
         val playerArchetype = getPlayerArchetype(ArchetypeBuilder(), world)
@@ -69,6 +69,6 @@ class GameScreen : Screen, IPhysics {
         world.process()
 
         val playerPosition = playerEntity.getComponent(CPosition::class.java).position
-        tileWorld.getChunksAround(GridPoint2(playerPosition.x.toInt(), playerPosition.y.toInt()), 5)
+        tileWorld.setActiveChunks(tileWorld.getChunksAround(GridPoint2(playerPosition.x.toInt(), playerPosition.y.toInt()), 1))
     }
 }

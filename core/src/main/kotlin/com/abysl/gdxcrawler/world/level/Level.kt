@@ -7,7 +7,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileSet
 import com.badlogic.gdx.math.GridPoint2
 import ktx.assets.async.AssetStorage
 
-abstract class Level(tileset: Tilesets, val chunkSize: Int) {
+abstract class Level(tileset: Tilesets) {
     companion object {
         val assetStorage = AssetStorage()
 
@@ -20,5 +20,5 @@ abstract class Level(tileset: Tilesets, val chunkSize: Int) {
 
     val tileSet by lazy<TiledMapTileSet> { assetStorage.loadSync(tileset.filePath) }
 
-    abstract fun generateChunk(chunkPosition: GridPoint2): TiledMap
+    abstract fun generateChunkTileMap(chunkPosition: GridPoint2, chunkSize: Int): TiledMap
 }

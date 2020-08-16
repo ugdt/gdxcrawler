@@ -7,18 +7,12 @@ import com.artemis.WorldConfigurationBuilder
 import com.artemis.managers.TagManager
 import com.badlogic.gdx.maps.tiled.TiledMap
 
-class GameWorld(private val tileMap: TiledMap) : WorldConfigurationBuilder() {
+class GameWorld() : WorldConfigurationBuilder() {
     init {
         with(
                 SEvent(),
                 SPhysics(),
                 TagManager()
         )
-    }
-
-    override fun build(): WorldConfiguration {
-        val world = super.build()
-        world.register("tileMap", tileMap)
-        return world
     }
 }
