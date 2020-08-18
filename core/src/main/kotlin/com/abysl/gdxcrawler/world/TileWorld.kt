@@ -1,75 +1,73 @@
 package com.abysl.gdxcrawler.world
 
 import com.abysl.gdxcrawler.world.level.Level
-import com.badlogic.gdx.maps.tiled.TiledMap
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.math.GridPoint2
-import com.badlogic.gdx.utils.ObjectMap
-import ktx.collections.*
+import kotlin.math.floor
 
-class TileWorld(tileSize: Int, private val chunkSideLength: Int, private val level: Level) {
-    val tiledMap = TiledMap()
-    private val baseLayer = TiledMapTileLayer(4096, 4096, tileSize, tileSize)
-    private val allChunks = ObjectMap<GridPoint2, Chunk>()
+/**
+ * @property chunkSize size of a chunk in tiles
+ * @property level
+ * @constructor creates a Tile World
+ * @author Andrew Bueide and Emery Tanghanwaye
+ * @param chunkSize
+ */
+class TileWorld(private val chunkSize: Int, private val level: Level) {
+    private val chunkMap: HashMap<GridPoint2, Chunk> = hashMapOf()
 
-    init {
-        tiledMap.layers.add(baseLayer)
-        tiledMap.tileSets.addTileSet(level.tiledSet)
+    /**
+     * Generates the chunk using [Level.generateChunk] if not found in the [chunkMap]
+     * @param position
+     * @return the chunk at the given [position]
+     */
+    private fun getChunk(position: GridPoint2): Chunk {
+        return chunkMap[position] ?: level.generateChunk(position, chunkSize).also { chunkMap[position] = it }
     }
 
+    /**
+     * @param position
+     * @param radius
+     * @return a list of chunks surrounding the given [Chunk] position (including the center [Chunk])
+     */
+    fun getChunksAround(position: GridPoint2, radius: Int = 1): List<Chunk> {
+        return getPointsAround(position, radius).map { getChunk(it) }
+    }
 
-    fun generateChunksAround(position: GridPoint2, radius: Int) {
-        val chunks = findChunksAround(position, radius)
+    /**
+     * @return a list of active [Chunk]s
+     */
+    fun getActiveChunks(): List<Chunk> {
+        return chunkMap.values.filter { it.active }
+    }
 
-        for (chunk in chunks) {
-            placeChunk(chunk)
+    /**
+     * Activates the given chunks, deactivates all other chunks.
+     * @param chunks
+     */
+    fun setActiveChunks(chunks: List<Chunk>){
+        val positions = chunks.map { it.chunkPosition }
+        for (chunk in chunkMap.values){
+            chunk.active = chunk.chunkPosition in positions
         }
     }
 
-    private fun placeChunk(chunk: Chunk) {
-        val chunkTiles = chunk.getTiles()
-
-        for (x in 0 until chunkSideLength) {
-            for (y in 0 until chunkSideLength) {
-                val tileMapX = x + chunk.tileMapPosition.x
-                val tileMapY = y + chunk.tileMapPosition.y
-
-                val cell = chunkTiles[x][y]
-
-                baseLayer.setCell((tileMapX), (tileMapY), cell)
-            }
-        }
+    /**
+     * converts world position to chunk position
+     * @param worldPosition
+     * @return chunk's coordinates
+     */
+    fun worldToChunk(worldPosition: GridPoint2): GridPoint2{
+        val size = chunkSize.toFloat()
+        return GridPoint2(floor(worldPosition.x / size).toInt(), floor(worldPosition.y / size).toInt())
     }
 
-    private fun findChunksAround(position: GridPoint2, radius: Int): List<Chunk> {
-        val centerChunkPosition = dividePosByChunkLength(position)
-        val chunks = mutableListOf<Chunk>()
-
-        for (x in (centerChunkPosition.x - radius)..(centerChunkPosition.x + radius))
-            for (y in (centerChunkPosition.y - radius)..(centerChunkPosition.y + radius)) {
-                val chunkPosition = GridPoint2(x, y)
-
-                if (!allChunks.containsKey(chunkPosition)) {
-                    allChunks[chunkPosition] = Chunk(chunkSideLength, level, multiplyPosByChunkLength(chunkPosition))
-                }
-
-                chunks.add(allChunks[chunkPosition])
-            }
-
-        return chunks.toList()
-    }
-
-    private fun multiplyPosByChunkLength(chunkPosition: GridPoint2): GridPoint2 {
-        val chunkX = chunkPosition.x * chunkSideLength
-        val chunkY = chunkPosition.y * chunkSideLength
-
-        return GridPoint2(chunkX, chunkY)
-    }
-
-    private fun dividePosByChunkLength(tilePosition: GridPoint2): GridPoint2 {
-        val chunkX = tilePosition.x / chunkSideLength
-        val chunkY = tilePosition.y / chunkSideLength
-
-        return GridPoint2(chunkX, chunkY)
+    /**
+     * @param center
+     * @param radius
+     * @return a list of [GridPoint2] containing all of the coordinates surrounding the [center] (including the center)
+     */
+    private fun getPointsAround(center: GridPoint2, radius: Int = 1): List<GridPoint2> {
+        val xRange = (center.x - radius)..(center.x + radius)
+        val yRange = (center.y - radius)..(center.y + radius)
+        return xRange.flatMap { x -> yRange.map { y -> GridPoint2(x, y) } }
     }
 }

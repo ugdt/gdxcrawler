@@ -285,7 +285,7 @@ class TileSetLoader(resolver: FileHandleResolver) : AsynchronousAssetLoader<Tile
     private fun loadTileSet(element: XmlReader.Element, tsxFile: FileHandle, imageResolver: ImageResolver): TiledMapTileSet {
         val tileSet = TiledMapTileSet()
 
-        val firstGid = element.getIntAttribute("firstgid", 1)
+        val firstGid = element.getIntAttribute("firstgid", 0)
         var imageSource = ""
         var imageWidth = 0
         var imageHeight = 0

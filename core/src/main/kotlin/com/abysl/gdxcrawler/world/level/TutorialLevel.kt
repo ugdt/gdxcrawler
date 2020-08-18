@@ -2,23 +2,36 @@ package com.abysl.gdxcrawler.world.level
 
 import com.abysl.gdxcrawler.utils.OpenSimplex2S
 import com.abysl.gdxcrawler.utils.noise2XBeforeY
+import com.abysl.gdxcrawler.world.Chunk
+import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.math.GridPoint2
+import ktx.tiled.property
 
-class TutorialLevel : Level() {
+class TutorialLevel : Level(TilesetPaths.TUTORIAL) {
     private val openSimplex2S = OpenSimplex2S(69420)
-    override val tileSetPath = TileSetAssetEnum.TUTORIAL.filePath
+    private val waterTileId = 151
+    private val sandTileId = 243
 
-    private val waterTileId = 152
-    private val sandTileId = 244
+    override fun generateChunk(chunkPosition: GridPoint2, chunkSize: Int): Chunk {
+        val layer = TiledMapTileLayer(chunkSize, chunkSize, tileSet.property("tilewidth"), tileSet.property("tileheight"))
 
-    override fun generateCell(mapPosition: GridPoint2): TiledMapTileLayer.Cell {
-        val noise = openSimplex2S.noise2XBeforeY(mapPosition)
-        val tileId = if (noise > 0) sandTileId else waterTileId
+        for (x in 0 until chunkSize) {
+            for (y in 0 until chunkSize) {
+                val noise = openSimplex2S.noise2XBeforeY(x + (chunkPosition.x * chunkSize), y + (chunkPosition.y * chunkSize))
+                val tileId = if (noise > 0) sandTileId else waterTileId
 
-        val cell = TiledMapTileLayer.Cell()
-        cell.tile = tiledSet.getTile(tileId)
+                val cell = TiledMapTileLayer.Cell()
+                cell.tile = tileSet.getTile(tileId)
 
-        return cell
+                layer.setCell(x, y, cell)
+            }
+        }
+
+        val tileMap = TiledMap()
+        tileMap.tileSets.addTileSet(tileSet)
+        tileMap.layers.add(layer)
+
+        return Chunk(chunkPosition, chunkSize, tileMap, false)
     }
 }

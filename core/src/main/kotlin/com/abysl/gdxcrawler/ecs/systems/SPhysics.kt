@@ -49,7 +49,7 @@ class SPhysics : IteratingSystem() {
                     if (cEvents.events.isNotEmpty()) {
                         for (event in cEvents.events) {
                             if (event is MoveEvent) {
-                                moveVector2 = moveVector2 + event.direction
+                                moveVector2 += event.direction
                             }
                         }
 

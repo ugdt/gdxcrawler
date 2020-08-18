@@ -1,12 +1,12 @@
 package com.abysl.gdxcrawler.world.level
 
 import com.abysl.gdxcrawler.utils.TileSetLoader
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell
+import com.abysl.gdxcrawler.world.Chunk
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet
 import com.badlogic.gdx.math.GridPoint2
 import ktx.assets.async.AssetStorage
 
-abstract class Level {
+abstract class Level protected constructor(tilesetPath: TilesetPaths) {
     companion object {
         val assetStorage = AssetStorage()
 
@@ -17,8 +17,7 @@ abstract class Level {
         }
     }
 
-    val tiledSet by lazy<TiledMapTileSet> { assetStorage.loadSync(tileSetPath) }
+    val tileSet by lazy<TiledMapTileSet> { assetStorage.loadSync(tilesetPath.filePath) }
 
-    abstract val tileSetPath: String
-    abstract fun generateCell(mapPosition: GridPoint2): Cell
+    abstract fun generateChunk(chunkPosition: GridPoint2, chunkSize: Int): Chunk
 }
