@@ -5,6 +5,7 @@ import com.abysl.gdxcrawler.ecs.components.CPosition
 import com.abysl.gdxcrawler.ecs.getPlayerArchetype
 import com.abysl.gdxcrawler.physics.IPhysics
 import com.abysl.gdxcrawler.rendering.GameRenderer
+import com.abysl.gdxcrawler.rendering.RenderSettings
 import com.abysl.gdxcrawler.utils.GameWorld
 import com.abysl.gdxcrawler.world.TileWorld
 import com.abysl.gdxcrawler.world.level.TutorialLevel
@@ -17,12 +18,12 @@ import com.badlogic.gdx.math.GridPoint2
 import com.badlogic.gdx.math.Vector2
 
 class GameScreen : Screen, IPhysics {
-    private val tileWorld = TileWorld(32, TutorialLevel())
+    private val tileWorld = TileWorld(64, TutorialLevel())
     private val world: World = World(GameWorld().build())
     private val playerId: Int
     private val playerEntity: Entity
     private val tagManager: TagManager = world.getSystem(TagManager::class.java)
-    private val worldRenderer = GameRenderer(world, tileWorld, 80f, 45f, 16)
+    private val worldRenderer = GameRenderer(world, tileWorld, RenderSettings(16, 20f, 11.5f))
 
     init {
         val playerArchetype = getPlayerArchetype(ArchetypeBuilder(), world)

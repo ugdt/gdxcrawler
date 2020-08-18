@@ -17,12 +17,12 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.math.Vector2
 import kotlin.math.roundToInt
 
-class GameRenderer(val world: World, private val tileWorld: TileWorld, private val baseWidth: Float, private val baseHeight: Float, private val tileSize: Int) {
+class GameRenderer(val world: World, private val tileWorld: TileWorld, private val renderSettings: RenderSettings) {
     private val spriteBatch = SpriteBatch()
     private val cam: OrthographicCamera = world.getRegistered(OrthographicCamera::class.java)
-            ?: OrthographicCamera(baseWidth, baseHeight)
+            ?: OrthographicCamera(renderSettings.baseWidth, renderSettings.baseHeight)
     private val tagManager = world.getSystem(TagManager::class.java)
-    private val entityAspect: Aspect.Builder = Aspect.all(CTexture::class.java, CPosition::class.java)
+    private val drawableAspect: Aspect.Builder = Aspect.all(CTexture::class.java, CPosition::class.java)
     private val mPosition: ComponentMapper<CPosition> = world.getMapper(CPosition::class.java)
     private val mTexture: ComponentMapper<CTexture> = world.getMapper(CTexture::class.java)
 
@@ -51,37 +51,39 @@ class GameRenderer(val world: World, private val tileWorld: TileWorld, private v
     private fun chunkToDrawables(chunk: Chunk): List<Pair<Vector2, Drawable>> {
         val result: MutableList<Pair<Vector2, Drawable>> = mutableListOf()
         for (layer in chunk.tileMap.layers) {
-            val drawable = DrawableLayer(cam, chunk.tileMap, layer as TiledMapTileLayer, tileSize)
+            val drawable = DrawableLayer(cam, chunk.tileMap, layer as TiledMapTileLayer, renderSettings.tileSize)
             val size = chunk.size.toFloat()
-            val position = Vector2(chunk.position.x * size, chunk.position.y * size)
+            val position = Vector2(chunk.chunkPosition.x * size, chunk.chunkPosition.y * size)
             result.add(position to drawable)
         }
         return result
     }
 
     private fun getEntities(): List<Int> {
-        val entities: IntBag = world.aspectSubscriptionManager.get(entityAspect).entities
+        val entities: IntBag = world.aspectSubscriptionManager.get(drawableAspect).entities
         val result: MutableList<Int> = mutableListOf()
+
         for (i in 0 until entities.size()) {
             result.add(entities.get(i))
         }
+
         return result
     }
 
     fun resize(width: Int, height: Int) {
         // calculate the scale that gets closest to showing 20.0 x 11.25 tiles on the screen
-        val widthScale: Int = (width.toFloat() / (baseWidth * tileSize)).roundToInt().coerceAtLeast(1)
-        val heightScale: Int = (height.toFloat() / (baseHeight * tileSize)).roundToInt().coerceAtLeast(1)
+        val widthScale: Int = (width.toFloat() / (renderSettings.baseWidth * renderSettings.tileSize)).roundToInt().coerceAtLeast(1)
+        val heightScale: Int = (height.toFloat() / (renderSettings.baseHeight * renderSettings.tileSize)).roundToInt().coerceAtLeast(1)
         val scale: Int = maxOf(widthScale, heightScale)
         // scale the tiles by that amount
-        val tileWidthPixels: Int = scale * tileSize
+        val tileWidthPixels: Int = scale * renderSettings.tileSize
         // calculate the camera width needed with the proper scale to keep things pixel perfect
 
-        val deltaWidth: Float = (width - (baseWidth * tileWidthPixels).roundToInt()) / tileWidthPixels.toFloat()
+        val deltaWidth: Float = (width - (renderSettings.baseWidth * tileWidthPixels).roundToInt()) / tileWidthPixels.toFloat()
         // calculate the camera height needed to keep things pixel perfect
-        val deltaHeight: Float = (height - (baseHeight * tileWidthPixels)) / tileWidthPixels
-        cam.viewportWidth = (baseWidth + deltaWidth)
-        cam.viewportHeight = (baseHeight + deltaHeight)
+        val deltaHeight: Float = (height - (renderSettings.baseHeight * tileWidthPixels)) / tileWidthPixels
+        cam.viewportWidth = (renderSettings.baseWidth + deltaWidth)
+        cam.viewportHeight = (renderSettings.baseHeight + deltaHeight)
 
         if (width % 2 != 0) {
             Gdx.graphics.setWindowedMode(width - 1, height)

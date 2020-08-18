@@ -9,7 +9,7 @@ import kotlin.math.floor
  * @property level
  * @constructor creates a Tile World
  * @author Andrew Bueide and Emery Tanghanwaye
- * @param tileSize
+ * @param chunkSize
  */
 class TileWorld(private val chunkSize: Int, private val level: Level) {
     private val chunkMap: HashMap<GridPoint2, Chunk> = hashMapOf()
@@ -44,9 +44,9 @@ class TileWorld(private val chunkSize: Int, private val level: Level) {
      * @param chunks
      */
     fun setActiveChunks(chunks: List<Chunk>){
-        val positions = chunks.map { it.position }
+        val positions = chunks.map { it.chunkPosition }
         for (chunk in chunkMap.values){
-            chunk.active = chunk.position in positions
+            chunk.active = chunk.chunkPosition in positions
         }
     }
 
