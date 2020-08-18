@@ -50,6 +50,11 @@ class TileWorld(private val chunkSize: Int, private val level: Level) {
         }
     }
 
+    /**
+     * converts world position to chunk position
+     * @param worldPosition
+     * @return chunk's coordinates
+     */
     fun worldToChunk(worldPosition: GridPoint2): GridPoint2{
         val size = chunkSize.toFloat()
         val res = GridPoint2(floor(worldPosition.x / size).toInt(), floor(worldPosition.y / size).toInt())
