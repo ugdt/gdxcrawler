@@ -7,15 +7,19 @@ import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.math.GridPoint2
 import ktx.tiled.property
+import ktx.tiled.set
 
 class TutorialLevel : Level(TilesetPaths.TUTORIAL) {
     private val openSimplex2S = OpenSimplex2S(69420)
     private val waterTileId = 151
     private val sandTileId = 243
     private val flowerTile = 2
+    private val grassTile = 17
 
     override fun generateChunk(chunkPosition: GridPoint2, chunkSize: Int): Chunk {
         val layer = TiledMapTileLayer(chunkSize, chunkSize, tileSet.property("tilewidth"), tileSet.property("tileheight"))
+        val layer2 = TiledMapTileLayer(chunkSize, chunkSize, tileSet.property("tilewidth"), tileSet.property("tileheight"))
+        layer2.properties["depth"] = 1
         var flowerX = chunkPosition.x
         var flowerY = chunkPosition.y
 
@@ -24,23 +28,25 @@ class TutorialLevel : Level(TilesetPaths.TUTORIAL) {
                 val noise = openSimplex2S.noise2XBeforeY(x * chunkPosition.x, y * chunkPosition.y)
                 val tileId = if(x == 0 && flowerX > 0) {
                     flowerX--
-                    flowerTile
+                    grassTile
                 } else if (y == 0 && flowerY > 0) {
                     flowerY--
-                    flowerTile
+                    grassTile
                 } else {
                     waterTileId
                 }
-                if (tileId != waterTileId && tileId != flowerTile){
-                    println("Shits bugged yo")
+                if(tileId == grassTile){
+                    layer2.setCell(x, y, TiledMapTileLayer.Cell().also { it.tile = tileSet.getTile(tileId) })
+                }else{
+                    layer.setCell(x, y, TiledMapTileLayer.Cell().also { it.tile = tileSet.getTile(tileId) })
                 }
-                layer.setCell(x, y, TiledMapTileLayer.Cell().also { it.tile = tileSet.getTile(tileId) })
             }
         }
 
         val tileMap = TiledMap()
         tileMap.tileSets.addTileSet(tileSet)
         tileMap.layers.add(layer)
+        tileMap.layers.add(layer2)
 
         return Chunk(chunkPosition, chunkSize, tileMap, false)
     }

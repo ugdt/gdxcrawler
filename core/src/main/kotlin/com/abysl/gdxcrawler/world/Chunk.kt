@@ -22,11 +22,5 @@ class Chunk(val position: GridPoint2, val size: Int, val tileMap: TiledMap, var 
 
     }
 
-    fun getMinDepth(): Int? {
-        return tileMap.layers.map { (it as TiledMapTileLayer).property<Int>("depth") }.minBy { it }
-    }
-
-    fun getMaxDepth(): Int? {
-        return tileMap.layers.map { (it as TiledMapTileLayer).property<Int>("depth") }.maxBy { it }
-    }
+    fun toDrawables(){}
 }

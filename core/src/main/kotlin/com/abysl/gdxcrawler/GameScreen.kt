@@ -4,7 +4,7 @@ import com.abysl.gdxcrawler.ecs.components.CPhysics
 import com.abysl.gdxcrawler.ecs.components.CPosition
 import com.abysl.gdxcrawler.ecs.getPlayerArchetype
 import com.abysl.gdxcrawler.physics.IPhysics
-import com.abysl.gdxcrawler.utils.GameRenderer
+import com.abysl.gdxcrawler.rendering.GameRenderer
 import com.abysl.gdxcrawler.utils.GameWorld
 import com.abysl.gdxcrawler.world.TileWorld
 import com.abysl.gdxcrawler.world.level.TutorialLevel
@@ -37,7 +37,7 @@ class GameScreen : Screen, IPhysics {
         val cPhysics = playerEntity.getComponent(CPhysics::class.java)
         val cPosition = playerEntity.getComponent(CPosition::class.java)
         cPosition.position = Vector2(0f, 0f)
-        cPhysics.speed = 100
+        cPhysics.speed = 10
         return playerEntity
     }
 
