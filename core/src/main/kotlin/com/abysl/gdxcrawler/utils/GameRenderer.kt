@@ -5,6 +5,7 @@ import com.abysl.gdxcrawler.ecs.components.CTexture
 import com.abysl.gdxcrawler.world.Chunk
 import com.abysl.gdxcrawler.world.TileWorld
 import com.artemis.Aspect
+import com.artemis.ComponentMapper
 import com.artemis.World
 import com.artemis.managers.TagManager
 import com.artemis.utils.IntBag
@@ -12,10 +13,8 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.maps.MapLayers
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
-import com.badlogic.gdx.math.Matrix3
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
 import ktx.graphics.use
@@ -23,12 +22,12 @@ import ktx.log.info
 import ktx.tiled.propertyOrNull
 import kotlin.math.roundToInt
 
-class GameRenderer(val world: World, val tileWorld: TileWorld, private val baseWidth: Float, private val baseHeight: Float, private val tileSize: Int) {
+class GameRenderer(val world: World, private val tileWorld: TileWorld, private val baseWidth: Float, private val baseHeight: Float, private val tileSize: Int) {
     private val spriteBatch = SpriteBatch()
     private val cam: OrthographicCamera = world.getRegistered(OrthographicCamera::class.java)
             ?: OrthographicCamera(baseWidth, baseHeight)
     private val tagManager = world.getSystem(TagManager::class.java)
-    val entityAspect: Aspect.Builder = Aspect.all(CTexture::class.java, CPosition::class.java)
+    private val entityAspect: Aspect.Builder = Aspect.all(CTexture::class.java, CPosition::class.java)
 
     fun render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
@@ -46,10 +45,10 @@ class GameRenderer(val world: World, val tileWorld: TileWorld, private val baseW
         renderEntities(entities)
     }
 
-    val mPosition = world.getMapper(CPosition::class.java)
-    val mTexture = world.getMapper(CTexture::class.java)
+    private val mPosition: ComponentMapper<CPosition> = world.getMapper(CPosition::class.java)
+    private val mTexture: ComponentMapper<CTexture> = world.getMapper(CTexture::class.java)
 
-    fun renderEntities(entities: IntBag){
+    private fun renderEntities(entities: IntBag) {
         spriteBatch.use {
             for (i in 0 until entities.size()) {
                 val id = entities[i]
@@ -60,7 +59,7 @@ class GameRenderer(val world: World, val tileWorld: TileWorld, private val baseW
         }
     }
 
-    fun renderChunks(chunks: List<Chunk>){
+    private fun renderChunks(chunks: List<Chunk>) {
         for (chunk in chunks) {
             val renderer = OrthogonalTiledMapRenderer(chunk.tileMap, 1f / tileSize, spriteBatch)
             val size = chunk.size.toFloat()
@@ -93,9 +92,10 @@ class GameRenderer(val world: World, val tileWorld: TileWorld, private val baseW
 
         var min: Int? = null
         var max: Int? = null
+
         for(chunk in chunks){
             val chunkMin = chunk.getMinDepth()
-            if(min == null){
+            if (min == null){
                 min = chunkMin
             }else if(chunkMin != null && chunkMin < min){
                 min = chunkMin
@@ -107,24 +107,30 @@ class GameRenderer(val world: World, val tileWorld: TileWorld, private val baseW
                 max = chunkMax
             }
         }
-        for(entity in entities){
+        for(entity in entities) {
             val depth = mPosition[entity].depth
-            if(min == null){
-                min = depth
-            }else if(max == null){
-                max = depth
-            } else if(depth < min){
-                min = depth
-            }else if(depth > max){
-                max = depth
+
+            when {
+                min == null -> {
+                    min = depth
+                }
+                max == null -> {
+                    max = depth
+                }
+                depth < min -> {
+                    min = depth
+                }
+                depth > max -> {
+                    max = depth
+                }
             }
         }
-        return  Pair(min, max)
+        return Pair(min, max)
     }
 
     fun warnDepth(chunks: List<Chunk>){
         chunks.forEach { chunk ->
-            chunk.tileMap.layers.map { it as TiledMapTileLayer }.filter { it.propertyOrNull<Int>("depth") == null }.forEach {
+            chunk.tileMap.layers.map { it as TiledMapTileLayer }.filter { it.propertyOrNull<Int>("depth") == null }.forEach { _ ->
                 info { "Failed to render layer, missing depth property" }
             }
         }
