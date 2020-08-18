@@ -12,15 +12,15 @@ import kotlin.math.floor
  * @param tileSize
  */
 class TileWorld(private val chunkSize: Int, private val level: Level) {
-    val chunkMap: HashMap<GridPoint2, Chunk> = hashMapOf()
+    private val chunkMap: HashMap<GridPoint2, Chunk> = hashMapOf()
 
     /**
-     * Generates the chunk using [Level.generateChunkTileMap] if not found in the [chunkMap]
+     * Generates the chunk using [Level.generateChunk] if not found in the [chunkMap]
      * @param position
      * @return the chunk at the given [position]
      */
-    fun getChunk(position: GridPoint2): Chunk {
-        return chunkMap[position] ?: Chunk(position, chunkSize, level.generateChunkTileMap(position, chunkSize)).also { chunkMap[position] = it }
+    private fun getChunk(position: GridPoint2): Chunk {
+        return chunkMap[position] ?: level.generateChunk(position, chunkSize).also { chunkMap[position] = it }
     }
 
     /**
@@ -57,8 +57,7 @@ class TileWorld(private val chunkSize: Int, private val level: Level) {
      */
     fun worldToChunk(worldPosition: GridPoint2): GridPoint2{
         val size = chunkSize.toFloat()
-        val res = GridPoint2(floor(worldPosition.x / size).toInt(), floor(worldPosition.y / size).toInt())
-        return res
+        return GridPoint2(floor(worldPosition.x / size).toInt(), floor(worldPosition.y / size).toInt())
     }
 
     /**
@@ -67,12 +66,8 @@ class TileWorld(private val chunkSize: Int, private val level: Level) {
      * @return a list of [GridPoint2] containing all of the coordinates surrounding the [center] (including the center)
      */
     private fun getPointsAround(center: GridPoint2, radius: Int = 1): List<GridPoint2> {
-        val xs = (center.x - radius)..(center.x + radius)
-        val ys = (center.y - radius)..(center.y + radius)
-        val res = xs.flatMap { x -> ys.map { y -> GridPoint2(x, y) } }
-//        println(res.size)
-//        res.forEach { println("${it.x}, ${it.y}") }
-//        println("---------------")
-        return res
+        val xRange = (center.x - radius)..(center.x + radius)
+        val yRange = (center.y - radius)..(center.y + radius)
+        return xRange.flatMap { x -> yRange.map { y -> GridPoint2(x, y) } }
     }
 }
