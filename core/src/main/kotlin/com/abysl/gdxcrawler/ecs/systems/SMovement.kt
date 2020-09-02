@@ -20,7 +20,7 @@ class SMovement : IteratingSystem() {
     private lateinit var mEvents: ComponentMapper<CEvents>
     private lateinit var tagManager: TagManager
 
-    @Wire
+    @Wire(name = "eventManager")
     lateinit var eventManager: EventManager
 
     override fun initialize() {

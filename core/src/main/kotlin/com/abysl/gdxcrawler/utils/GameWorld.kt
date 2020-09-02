@@ -7,6 +7,7 @@ import com.artemis.World
 import com.artemis.WorldConfiguration
 import com.artemis.WorldConfigurationBuilder
 import com.artemis.managers.TagManager
+import com.badlogic.gdx.Gdx
 
 class GameWorld : WorldConfigurationBuilder() {
     init {
@@ -16,12 +17,11 @@ class GameWorld : WorldConfigurationBuilder() {
             TagManager()
         )
     }
-
-    companion object {
-        fun create(): World {
-            val worldConfig: WorldConfiguration = GameWorld().build()
-            worldConfig.register(EventManager())
-            return World(worldConfig)
-        }
+    fun create(): World {
+        val worldConfig: WorldConfiguration = GameWorld().build()
+        worldConfig.register("eventManager", EventManager())
+        val preferences = Gdx.app.getPreferences("com.abysl.gdxcrawler")
+        worldConfig.register("preferences", preferences)
+        return World(worldConfig)
     }
 }
