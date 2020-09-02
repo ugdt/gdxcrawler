@@ -28,5 +28,4 @@ class MainMenu : Screen {
 
     override fun dispose() {
     }
-
 }

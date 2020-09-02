@@ -1,35 +1,33 @@
 package com.abysl.gdxcrawler.ecs.systems
 
 import com.abysl.gdxcrawler.ecs.components.CEvents
-import com.abysl.gdxcrawler.input.Event
-import com.abysl.gdxcrawler.input.MoveEvent
+import com.abysl.gdxcrawler.ecs.events.Event
+import com.abysl.gdxcrawler.ecs.events.LocalPlayerMoveEvent
 import com.artemis.BaseSystem
 import com.artemis.ComponentMapper
 import com.artemis.managers.TagManager
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputProcessor
-import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.IntMap
 import com.badlogic.gdx.utils.IntSet
-import ktx.collections.*
 
 class SEvent : BaseSystem(), InputProcessor {
-    private val events: GdxArray<Event>
-    private val keyToEvent = IntMap<MoveEvent>()
+
+    private val events: MutableList<Event>
+    private val keyToEvent = IntMap<LocalPlayerMoveEvent>()
     private var entity = -1
     private lateinit var mEvent: ComponentMapper<CEvents>
     private lateinit var cEvents: CEvents
     private val heldKeys: IntSet
 
     init {
-        keyToEvent[Input.Keys.W] = MoveEvent(Vector2(0f, 1f))
-        keyToEvent[Input.Keys.A] = MoveEvent(Vector2(-1f, 0f))
-        keyToEvent[Input.Keys.S] = MoveEvent(Vector2(0f, -1f))
-        keyToEvent[Input.Keys.D] = MoveEvent(Vector2(1f, 0f))
+//        keyToEvent[Input.Keys.W] = MoveEvent(Vector2(0f, 1f))
+//        keyToEvent[Input.Keys.A] = MoveEvent(Vector2(-1f, 0f))
+//        keyToEvent[Input.Keys.S] = MoveEvent(Vector2(0f, -1f))
+//        keyToEvent[Input.Keys.D] = MoveEvent(Vector2(1f, 0f))
 
         heldKeys = IntSet(keyToEvent.size)
-        events = GdxArray(keyToEvent.size)
+        events = mutableListOf()
     }
 
     override fun initialize() {

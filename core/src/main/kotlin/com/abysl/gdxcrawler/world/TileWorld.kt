@@ -43,9 +43,9 @@ class TileWorld(private val chunkSize: Int, private val level: Level) {
      * Activates the given chunks, deactivates all other chunks.
      * @param chunks
      */
-    fun setActiveChunks(chunks: List<Chunk>){
+    fun setActiveChunks(chunks: List<Chunk>) {
         val positions = chunks.map { it.chunkPosition }
-        for (chunk in chunkMap.values){
+        for (chunk in chunkMap.values) {
             chunk.active = chunk.chunkPosition in positions
         }
     }
@@ -55,7 +55,7 @@ class TileWorld(private val chunkSize: Int, private val level: Level) {
      * @param worldPosition
      * @return chunk's coordinates
      */
-    fun worldToChunk(worldPosition: GridPoint2): GridPoint2{
+    fun worldToChunk(worldPosition: GridPoint2): GridPoint2 {
         val size = chunkSize.toFloat()
         return GridPoint2(floor(worldPosition.x / size).toInt(), floor(worldPosition.y / size).toInt())
     }

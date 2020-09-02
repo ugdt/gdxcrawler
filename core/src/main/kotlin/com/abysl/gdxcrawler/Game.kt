@@ -7,7 +7,7 @@ import ktx.app.KtxGame
 import ktx.async.KtxAsync
 
 class Game : KtxGame<Screen>() {
-    private val physicsTickRate = (1f / 100f) // 100 times per second
+    private val physicsTickRate = (1f / 144f) // 100 times per second
     private var accumulator = 0f
 
     override fun create() {
@@ -25,7 +25,6 @@ class Game : KtxGame<Screen>() {
             physics(physicsTickRate)
             accumulator -= physicsTickRate
         }
-
     }
 
     private fun physics(delta: Float) {

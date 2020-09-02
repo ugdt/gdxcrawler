@@ -1,11 +1,12 @@
 package com.abysl.gdxcrawler
 
-import com.abysl.gdxcrawler.ecs.components.CPhysics
+import com.abysl.gdxcrawler.ecs.components.CMove
 import com.abysl.gdxcrawler.ecs.components.CPosition
+import com.abysl.gdxcrawler.ecs.events.EventManager
 import com.abysl.gdxcrawler.ecs.getPlayerArchetype
 import com.abysl.gdxcrawler.physics.IPhysics
 import com.abysl.gdxcrawler.rendering.GameRenderer
-import com.abysl.gdxcrawler.rendering.RenderSettings
+import com.abysl.gdxcrawler.settings.RenderSettings
 import com.abysl.gdxcrawler.utils.GameWorld
 import com.abysl.gdxcrawler.world.TileWorld
 import com.abysl.gdxcrawler.world.level.TutorialLevel
@@ -19,11 +20,12 @@ import com.badlogic.gdx.math.Vector2
 
 class GameScreen : Screen, IPhysics {
     private val tileWorld = TileWorld(64, TutorialLevel())
-    private val world: World = World(GameWorld().build())
+    private val world: World = GameWorld.create()
     private val playerId: Int
     private val playerEntity: Entity
     private val tagManager: TagManager = world.getSystem(TagManager::class.java)
     private val worldRenderer = GameRenderer(world, tileWorld, RenderSettings(16, 20f, 11.5f))
+    private val eventManager: EventManager = world.getRegistered(EventManager::class.java)
 
     init {
         val playerArchetype = getPlayerArchetype(ArchetypeBuilder(), world)
@@ -35,10 +37,10 @@ class GameScreen : Screen, IPhysics {
         tagManager.register("PLAYER", playerId)
 
         val playerEntity = world.getEntity(playerId)
-        val cPhysics = playerEntity.getComponent(CPhysics::class.java)
+        val cPhysics = playerEntity.getComponent(CMove::class.java)
         val cPosition = playerEntity.getComponent(CPosition::class.java)
         cPosition.position = Vector2(0f, 0f)
-        cPhysics.speed = 10
+        cPhysics.speed = 10f
         return playerEntity
     }
 
@@ -67,6 +69,7 @@ class GameScreen : Screen, IPhysics {
 
     override fun physics(delta: Float) {
         world.setDelta(delta)
+        eventManager.process()
         world.process()
 
         val playerPosition = playerEntity.getComponent(CPosition::class.java).position

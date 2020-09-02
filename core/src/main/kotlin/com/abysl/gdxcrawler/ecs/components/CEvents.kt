@@ -1,6 +1,6 @@
 package com.abysl.gdxcrawler.ecs.components
 
-import com.abysl.gdxcrawler.input.Event
+import com.abysl.gdxcrawler.ecs.events.Event
 import com.artemis.Component
 
 class CEvents : Component() {
