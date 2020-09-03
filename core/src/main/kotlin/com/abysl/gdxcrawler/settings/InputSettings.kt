@@ -20,4 +20,3 @@ data class InputSettings(
         Input.Keys.D to LocalPlayerMoveEvent(-1f, 0f),
     ),
 )
-
