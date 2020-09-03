@@ -135,8 +135,10 @@ class TileSetLoader(resolver: FileHandleResolver) : AsynchronousAssetLoader<Tile
                 var child: XmlReader.Element
 
                 when {
-                    (element.getChildByName("polygon").also { child = it } != null ||
-                            element.getChildByName("polyline").also { child = it } != null) -> {
+                    (
+                        element.getChildByName("polygon").also { child = it } != null ||
+                            element.getChildByName("polyline").also { child = it } != null
+                        ) -> {
                         val name = child.name.orEmpty()
 
                         val points = child.getAttribute("points").split(" ").toTypedArray()
@@ -276,8 +278,10 @@ class TileSetLoader(resolver: FileHandleResolver) : AsynchronousAssetLoader<Tile
                 Color.valueOf(opaqueColor + alpha)
             }
             else -> {
-                throw GdxRuntimeException("Wrong type given for property " + name + ", given : " + type
-                        + ", supported : string, bool, int, float, color")
+                throw GdxRuntimeException(
+                    "Wrong type given for property " + name + ", given : " + type +
+                        ", supported : string, bool, int, float, color"
+                )
             }
         }
     }
@@ -290,7 +294,6 @@ class TileSetLoader(resolver: FileHandleResolver) : AsynchronousAssetLoader<Tile
         var imageWidth = 0
         var imageHeight = 0
         var image: FileHandle? = null
-
 
         val imageElement = element.getChildByName("image")
 
@@ -324,8 +327,10 @@ class TileSetLoader(resolver: FileHandleResolver) : AsynchronousAssetLoader<Tile
 
         // Tiles
         val tileElements = element.getChildrenByName("tile")
-        addStaticTiles(tsxFile, imageResolver, tileSet, tileElements, firstGid, tileWidth, tileHeight, spacing, margin, offsetX,
-                offsetY, imageSource, imageWidth, imageHeight, image)
+        addStaticTiles(
+            tsxFile, imageResolver, tileSet, tileElements, firstGid, tileWidth, tileHeight, spacing, margin, offsetX,
+            offsetY, imageSource, imageWidth, imageHeight, image
+        )
         val animatedTiles = Array<AnimatedTiledMapTile>()
         for (tileElement in tileElements) {
             val localTileId = tileElement.getIntAttribute("id", 0)
@@ -352,9 +357,23 @@ class TileSetLoader(resolver: FileHandleResolver) : AsynchronousAssetLoader<Tile
         return tileSet
     }
 
-    private fun addStaticTiles(tsxFile: FileHandle, imageResolver: ImageResolver, tileSet: TiledMapTileSet, tileElements: Array<XmlReader.Element>,
-                               firstgid: Int, tilewidth: Int, tileheight: Int, spacing: Int, margin: Int, offsetX: Int, offsetY: Int,
-                               imageSource: String?, imageWidth: Int, imageHeight: Int, image: FileHandle?) {
+    private fun addStaticTiles(
+        tsxFile: FileHandle,
+        imageResolver: ImageResolver,
+        tileSet: TiledMapTileSet,
+        tileElements: Array<XmlReader.Element>,
+        firstgid: Int,
+        tilewidth: Int,
+        tileheight: Int,
+        spacing: Int,
+        margin: Int,
+        offsetX: Int,
+        offsetY: Int,
+        imageSource: String?,
+        imageWidth: Int,
+        imageHeight: Int,
+        image: FileHandle?
+    ) {
         var mImageSource = imageSource
         val props = tileSet.properties
         if (image != null) {
@@ -421,8 +440,12 @@ class TileSetLoader(resolver: FileHandleResolver) : AsynchronousAssetLoader<Tile
         }
     }
 
-    private fun createAnimatedTile(tileSet: TiledMapTileSet, tile: TiledMapTile, tileElement: XmlReader.Element,
-                                   firstgid: Int): AnimatedTiledMapTile? {
+    private fun createAnimatedTile(
+        tileSet: TiledMapTileSet,
+        tile: TiledMapTile,
+        tileElement: XmlReader.Element,
+        firstgid: Int
+    ): AnimatedTiledMapTile? {
         val animationElement = tileElement.getChildByName("animation")
 
         if (animationElement != null) {
@@ -441,8 +464,13 @@ class TileSetLoader(resolver: FileHandleResolver) : AsynchronousAssetLoader<Tile
         return null
     }
 
-    private fun addStaticTiledMapTile(tileSet: TiledMapTileSet, textureRegion: TextureRegion?, tileId: Int, offsetX: Float,
-                                      offsetY: Float) {
+    private fun addStaticTiledMapTile(
+        tileSet: TiledMapTileSet,
+        textureRegion: TextureRegion?,
+        tileId: Int,
+        offsetX: Float,
+        offsetY: Float
+    ) {
         val tile: TiledMapTile = StaticTiledMapTile(textureRegion)
         tile.id = tileId
         tile.offsetX = offsetX

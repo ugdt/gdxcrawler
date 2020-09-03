@@ -20,7 +20,7 @@ class C25DemoLevel : Level(TilesetPaths.TUTORIAL) {
 
         for (x in 0 until chunkSize) {
             for (y in 0 until chunkSize) {
-                val tileId = if(x == 0 && flowerX > 0) {
+                val tileId = if (x == 0 && flowerX > 0) {
                     flowerX--
                     grassTile
                 } else if (y == 0 && flowerY > 0) {
@@ -29,9 +29,9 @@ class C25DemoLevel : Level(TilesetPaths.TUTORIAL) {
                 } else {
                     waterTileId
                 }
-                if (tileId == grassTile){
+                if (tileId == grassTile) {
                     layer2.setCell(x, y, TiledMapTileLayer.Cell().also { it.tile = tileSet.getTile(tileId) })
-                }else{
+                } else {
                     layer.setCell(x, y, TiledMapTileLayer.Cell().also { it.tile = tileSet.getTile(tileId) })
                 }
             }

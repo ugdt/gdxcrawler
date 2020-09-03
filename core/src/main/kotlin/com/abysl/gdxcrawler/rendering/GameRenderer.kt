@@ -2,8 +2,9 @@ package com.abysl.gdxcrawler.rendering
 
 import com.abysl.gdxcrawler.ecs.components.CPosition
 import com.abysl.gdxcrawler.ecs.components.CTexture
+import com.abysl.gdxcrawler.settings.RenderSettings
 import com.abysl.gdxcrawler.world.Chunk
-import com.abysl.gdxcrawler.world.TileWorld
+import com.abysl.gdxcrawler.world.WorldMap
 import com.artemis.Aspect
 import com.artemis.ComponentMapper
 import com.artemis.World
@@ -17,10 +18,10 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.math.Vector2
 import kotlin.math.roundToInt
 
-class GameRenderer(val world: World, private val tileWorld: TileWorld, private val renderSettings: RenderSettings) {
+class GameRenderer(val world: World, private val worldMap: WorldMap, private val renderSettings: RenderSettings) {
     private val spriteBatch = SpriteBatch()
     private val cam: OrthographicCamera = world.getRegistered(OrthographicCamera::class.java)
-            ?: OrthographicCamera(renderSettings.baseWidth, renderSettings.baseHeight)
+        ?: OrthographicCamera(renderSettings.baseWidth, renderSettings.baseHeight)
     private val tagManager = world.getSystem(TagManager::class.java)
     private val drawableAspect: Aspect.Builder = Aspect.all(CTexture::class.java, CPosition::class.java)
     private val mPosition: ComponentMapper<CPosition> = world.getMapper(CPosition::class.java)
@@ -35,8 +36,8 @@ class GameRenderer(val world: World, private val tileWorld: TileWorld, private v
         cam.update()
 
         val drawables: List<Pair<Vector2, Drawable>> =
-                (getEntities().map(::entityToDrawable) + tileWorld.getActiveChunks().flatMap(::chunkToDrawables))
-                        .sortedWith(compareBy({ it.second.depth }, { if (it.second is DrawableLayer) -1 else 1 }))
+            (getEntities().map(::entityToDrawable) + worldMap.getActiveChunks().flatMap(::chunkToDrawables))
+                .sortedWith(compareBy({ it.second.depth }, { if (it.second is DrawableLayer) -1 else 1 }))
         drawables.forEach {
             spriteBatch.projectionMatrix = cam.combined
             it.second.draw(spriteBatch, it.first.x, it.first.y, 1f, 1f)

@@ -4,6 +4,7 @@ eclipse.project.name = appName + '-core'
 dependencies {
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion"
+    implementation "org.jetbrains.kotlin:kotlin-script-runtime:$kotlinVersion"
     api "com.badlogicgames.gdx:gdx:$gdxVersion"
     api "net.onedaybeard.artemis:artemis-odb:$artemisVersion"
     api "com.badlogicgames.gdx:gdx-ai:$aiVersion"

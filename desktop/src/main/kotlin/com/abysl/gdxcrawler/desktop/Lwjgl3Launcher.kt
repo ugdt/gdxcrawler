@@ -4,13 +4,14 @@ import com.abysl.gdxcrawler.Game
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
 
-fun main() {
-    Lwjgl3Launcher.createApplication()
-}
-
 /** Launches the desktop (LWJGL3) application.  */
 object Lwjgl3Launcher {
-    internal fun createApplication(): Lwjgl3Application {
+    @JvmStatic
+    fun main(args: Array<String>) {
+        createApplication()
+    }
+
+    fun createApplication(): Lwjgl3Application {
         return Lwjgl3Application(Game(), defaultConfiguration)
     }
 
