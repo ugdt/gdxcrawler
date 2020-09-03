@@ -1,7 +1,11 @@
 package com.abysl.gdxcrawler.rendering
 
+import com.abysl.gdxcrawler.ecs.components.BodyComponent
 import com.abysl.gdxcrawler.ecs.components.PositionComponent
 import com.abysl.gdxcrawler.ecs.components.TextureComponent
+import com.abysl.gdxcrawler.physics.Body
+import com.abysl.gdxcrawler.physics.CircleBody
+import com.abysl.gdxcrawler.physics.RectBody
 import com.abysl.gdxcrawler.settings.RenderSettings
 import com.abysl.gdxcrawler.world.Chunk
 import com.abysl.gdxcrawler.world.WorldMap
@@ -11,21 +15,26 @@ import com.artemis.World
 import com.artemis.managers.TagManager
 import com.artemis.utils.IntBag
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.math.Vector2
 import kotlin.math.roundToInt
 
 class GameRenderer(val world: World, private val worldMap: WorldMap, private val renderSettings: RenderSettings) {
     private val spriteBatch = SpriteBatch()
+    private val shapeRenderer = ShapeRenderer()
     private val cam: OrthographicCamera = world.getRegistered(OrthographicCamera::class.java)
         ?: OrthographicCamera(renderSettings.baseWidth, renderSettings.baseHeight)
     private val tagManager = world.getSystem(TagManager::class.java)
     private val drawableAspect: Aspect.Builder = Aspect.all(TextureComponent::class.java, PositionComponent::class.java)
+    private val bodyAspect: Aspect.Builder = Aspect.all(BodyComponent::class.java, PositionComponent::class.java)
     private val positionMapper: ComponentMapper<PositionComponent> = world.getMapper(PositionComponent::class.java)
     private val mTexture: ComponentMapper<TextureComponent> = world.getMapper(TextureComponent::class.java)
+    private val mBody: ComponentMapper<BodyComponent> = world.getMapper(BodyComponent::class.java)
 
     fun render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
@@ -36,12 +45,30 @@ class GameRenderer(val world: World, private val worldMap: WorldMap, private val
         cam.update()
 
         val drawables: List<Pair<Vector2, Drawable>> =
-            (getEntities().map(::entityToDrawable) + worldMap.getActiveChunks().flatMap(::chunkToDrawables))
+            (getEntities(drawableAspect).map(::entityToDrawable) + worldMap.getActiveChunks().flatMap(::chunkToDrawables))
                 .sortedWith(compareBy({ it.second.depth }, { if (it.second is DrawableLayer) -1 else 1 }))
         drawables.forEach {
             spriteBatch.projectionMatrix = cam.combined
             it.second.draw(spriteBatch, it.first.x, it.first.y, 1f, 1f)
         }
+        renderBodies(shapeRenderer)
+    }
+
+    private fun renderBodies(shapeRenderer: ShapeRenderer) {
+        shapeRenderer.projectionMatrix = cam.combined
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line)
+        shapeRenderer.color = Color.BLACK
+        getEntities(bodyAspect).forEach {
+            val pos: Vector2 = positionMapper[it].position
+            val body: Body = mBody[it].body
+            if (body is RectBody) {
+                shapeRenderer.rect(pos.x, pos.y, body.length, body.width)
+            }
+            if (body is CircleBody) {
+                shapeRenderer.circle(pos.x, pos.y, body.radius)
+            }
+        }
+        shapeRenderer.end()
     }
 
     private fun entityToDrawable(id: Int): Pair<Vector2, Drawable> {
@@ -60,8 +87,8 @@ class GameRenderer(val world: World, private val worldMap: WorldMap, private val
         return result
     }
 
-    private fun getEntities(): List<Int> {
-        val entities: IntBag = world.aspectSubscriptionManager.get(drawableAspect).entities
+    private fun getEntities(aspect: Aspect.Builder): List<Int> {
+        val entities: IntBag = world.aspectSubscriptionManager.get(aspect).entities
         val result: MutableList<Int> = mutableListOf()
 
         for (i in 0 until entities.size()) {

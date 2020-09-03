@@ -52,8 +52,8 @@ class GameScreen : Screen, IPhysics {
         val positionComponent = playerEntity.getComponent(PositionComponent::class.java)
         val bodyComponent = playerEntity.getComponent(BodyComponent::class.java)
         bodyComponent.body = RectBody(1f, 1f)
-        positionComponent.position = Vector2(0f, 0f)
-        moveComponent.speed = 10f
+        positionComponent.position = Vector2(-1f, -1f)
+        moveComponent.speed = 5f
         return playerEntity
     }
 
@@ -87,6 +87,6 @@ class GameScreen : Screen, IPhysics {
 
         val playerPosition = playerEntity.getComponent(PositionComponent::class.java).position
         val gridPosition = GridPoint2(playerPosition.x.toInt(), playerPosition.y.toInt())
-        worldMap.setActiveChunks(worldMap.getChunksAround(worldMap.worldToChunk(gridPosition)))
+        worldMap.setActiveChunks(worldMap.getChunksAround(worldMap.worldToChunk(gridPosition), 1))
     }
 }
