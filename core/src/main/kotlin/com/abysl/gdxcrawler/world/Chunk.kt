@@ -2,6 +2,7 @@ package com.abysl.gdxcrawler.world
 
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.math.GridPoint2
+import java.util.*
 
 /**
  * @property chunkPosition
@@ -19,5 +20,15 @@ class Chunk(val chunkPosition: GridPoint2, val size: Int, val tileMap: TiledMap,
      */
     fun update(delta: Float) {
         println(delta)
+    }
+
+    fun worldToRelative(position: GridPoint2): GridPoint2? {
+        if (position.x >= worldPosition.x && position.x < (worldPosition.x + size) &&
+            position.y >= worldPosition.y && position.y < (worldPosition.y + size)
+        ) {
+            return GridPoint2(position.x - (chunkPosition.x * size), position.y - (chunkPosition.y * size))
+        }
+
+        return null
     }
 }

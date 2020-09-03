@@ -1,7 +1,7 @@
 package com.abysl.gdxcrawler.rendering
 
-import com.abysl.gdxcrawler.ecs.components.CPosition
-import com.abysl.gdxcrawler.ecs.components.CTexture
+import com.abysl.gdxcrawler.ecs.components.PositionComponent
+import com.abysl.gdxcrawler.ecs.components.TextureComponent
 import com.abysl.gdxcrawler.settings.RenderSettings
 import com.abysl.gdxcrawler.world.Chunk
 import com.abysl.gdxcrawler.world.WorldMap
@@ -23,14 +23,14 @@ class GameRenderer(val world: World, private val worldMap: WorldMap, private val
     private val cam: OrthographicCamera = world.getRegistered(OrthographicCamera::class.java)
         ?: OrthographicCamera(renderSettings.baseWidth, renderSettings.baseHeight)
     private val tagManager = world.getSystem(TagManager::class.java)
-    private val drawableAspect: Aspect.Builder = Aspect.all(CTexture::class.java, CPosition::class.java)
-    private val mPosition: ComponentMapper<CPosition> = world.getMapper(CPosition::class.java)
-    private val mTexture: ComponentMapper<CTexture> = world.getMapper(CTexture::class.java)
+    private val drawableAspect: Aspect.Builder = Aspect.all(TextureComponent::class.java, PositionComponent::class.java)
+    private val positionMapper: ComponentMapper<PositionComponent> = world.getMapper(PositionComponent::class.java)
+    private val mTexture: ComponentMapper<TextureComponent> = world.getMapper(TextureComponent::class.java)
 
     fun render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         val player = tagManager.getEntity("PLAYER")
-        val pos = player.getComponent(CPosition::class.java).position
+        val pos = player.getComponent(PositionComponent::class.java).position
 
         cam.position.set(pos.x, pos.y, 0f)
         cam.update()
@@ -45,7 +45,7 @@ class GameRenderer(val world: World, private val worldMap: WorldMap, private val
     }
 
     private fun entityToDrawable(id: Int): Pair<Vector2, Drawable> {
-        val cPosition = mPosition[id]
+        val cPosition = positionMapper[id]
         return cPosition.position to DrawableTexture(mTexture[id].texture, cPosition.depth)
     }
 

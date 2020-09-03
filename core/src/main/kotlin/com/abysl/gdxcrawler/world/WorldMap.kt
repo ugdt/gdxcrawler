@@ -1,7 +1,9 @@
 package com.abysl.gdxcrawler.world
 
 import com.abysl.gdxcrawler.world.level.Level
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.math.GridPoint2
+import com.badlogic.gdx.math.Vector2
 import kotlin.math.floor
 
 /**
@@ -69,5 +71,34 @@ class WorldMap(private val chunkSize: Int, private val level: Level) {
         val xRange = (center.x - radius)..(center.x + radius)
         val yRange = (center.y - radius)..(center.y + radius)
         return xRange.flatMap { x -> yRange.map { y -> GridPoint2(x, y) } }
+    }
+
+    fun collides(points: List<GridPoint2>): List<GridPoint2> {
+        val collidingTiles = mutableListOf<GridPoint2>()
+
+        points.forEach { point ->
+            val chunk = getChunk(worldToChunk(point))
+
+            val relativePosition: GridPoint2 = chunk.worldToRelative(point) ?: error("ERROR: Relative position outside of chunk boundaries!")
+            val collisionLayers: List<TiledMapTileLayer> = chunk.tileMap.layers.filter { it.properties["collision"] == true }.map { it as TiledMapTileLayer }
+
+            val collides = collisionLayers.any {
+                (it.getCell(relativePosition.x, relativePosition.y) != null)
+            }
+
+            if (collides) {
+                collidingTiles.add(point)
+            }
+        }
+
+        return collidingTiles
+    }
+
+    fun collides(vararg vectors: Vector2): List<GridPoint2> {
+        return collides(
+            vectors.map {
+                GridPoint2(it.x.toInt(), it.y.toInt())
+            }
+        )
     }
 }

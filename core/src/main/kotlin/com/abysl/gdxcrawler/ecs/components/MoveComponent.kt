@@ -3,7 +3,10 @@ package com.abysl.gdxcrawler.ecs.components
 import com.artemis.Component
 import com.badlogic.gdx.math.Vector2
 
-class CMove(var speed: Float = 0f, var direction: Vector2 = Vector2.Zero) : Component() {
+class MoveComponent(
+    var speed: Float = 0f,
+    var direction: Vector2 = Vector2.Zero,
+) : Component() {
 
     /**
      * @return a new vector containing the current velocity

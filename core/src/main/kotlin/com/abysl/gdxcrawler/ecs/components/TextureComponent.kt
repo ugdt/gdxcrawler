@@ -3,6 +3,6 @@ package com.abysl.gdxcrawler.ecs.components
 import com.artemis.Component
 import com.badlogic.gdx.graphics.Texture
 
-class CTexture : Component() {
+class TextureComponent : Component() {
     var texture: Texture = Texture("default.png")
 }

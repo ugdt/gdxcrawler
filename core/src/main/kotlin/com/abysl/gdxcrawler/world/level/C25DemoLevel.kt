@@ -15,6 +15,7 @@ class C25DemoLevel : Level(TilesetPaths.TUTORIAL) {
         val layer = TiledMapTileLayer(chunkSize, chunkSize, tileSet.property("tilewidth"), tileSet.property("tileheight"))
         val layer2 = TiledMapTileLayer(chunkSize, chunkSize, tileSet.property("tilewidth"), tileSet.property("tileheight"))
         layer2.properties["depth"] = 1
+        layer2.properties["collision"] = true
         var flowerX = chunkPosition.x
         var flowerY = chunkPosition.y
 

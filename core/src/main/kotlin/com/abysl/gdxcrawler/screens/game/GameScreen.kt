@@ -1,16 +1,18 @@
 package com.abysl.gdxcrawler.screens.game
 
-import com.abysl.gdxcrawler.ecs.components.CMove
-import com.abysl.gdxcrawler.ecs.components.CPosition
+import com.abysl.gdxcrawler.ecs.components.BodyComponent
+import com.abysl.gdxcrawler.ecs.components.MoveComponent
+import com.abysl.gdxcrawler.ecs.components.PositionComponent
 import com.abysl.gdxcrawler.ecs.events.EventManager
 import com.abysl.gdxcrawler.ecs.getPlayerArchetype
 import com.abysl.gdxcrawler.physics.IPhysics
+import com.abysl.gdxcrawler.physics.RectBody
 import com.abysl.gdxcrawler.rendering.GameRenderer
 import com.abysl.gdxcrawler.settings.InputSettings
 import com.abysl.gdxcrawler.settings.RenderSettings
 import com.abysl.gdxcrawler.utils.GameWorld
+import com.abysl.gdxcrawler.utils.GameWorldConstants
 import com.abysl.gdxcrawler.world.WorldMap
-import com.abysl.gdxcrawler.world.level.TutorialLevel
 import com.artemis.ArchetypeBuilder
 import com.artemis.Entity
 import com.artemis.World
@@ -24,14 +26,14 @@ import com.badlogic.gdx.math.Vector2
 import ktx.preferences.get
 
 class GameScreen : Screen, IPhysics {
-    private val worldMap = WorldMap(64, TutorialLevel())
     private val world: World = GameWorld().create()
     private val playerId: Int
     private val playerEntity: Entity
     private val tagManager: TagManager = world.getSystem(TagManager::class.java)
+    private val worldMap: WorldMap = world.getRegistered(GameWorldConstants.WORLD_MAP)
     private val worldRenderer = GameRenderer(world, worldMap, RenderSettings(16, 20f, 11.5f))
-    private val eventManager: EventManager = world.getRegistered("eventManager")
-    private val prefs: Preferences = world.getRegistered("preferences")
+    private val eventManager: EventManager = world.getRegistered(GameWorldConstants.EVENT_MANAGER)
+    private val prefs: Preferences = world.getRegistered(GameWorldConstants.PREFERENCES)
     private val multiplexer: InputMultiplexer = InputMultiplexer()
 
     init {
@@ -46,10 +48,12 @@ class GameScreen : Screen, IPhysics {
         tagManager.register("PLAYER", playerId)
 
         val playerEntity = world.getEntity(playerId)
-        val cMove = playerEntity.getComponent(CMove::class.java)
-        val cPosition = playerEntity.getComponent(CPosition::class.java)
-        cPosition.position = Vector2(0f, 0f)
-        cMove.speed = 10f
+        val moveComponent = playerEntity.getComponent(MoveComponent::class.java)
+        val positionComponent = playerEntity.getComponent(PositionComponent::class.java)
+        val bodyComponent = playerEntity.getComponent(BodyComponent::class.java)
+        bodyComponent.body = RectBody(1f, 1f)
+        positionComponent.position = Vector2(0f, 0f)
+        moveComponent.speed = 10f
         return playerEntity
     }
 
@@ -81,7 +85,7 @@ class GameScreen : Screen, IPhysics {
         eventManager.process()
         world.process()
 
-        val playerPosition = playerEntity.getComponent(CPosition::class.java).position
+        val playerPosition = playerEntity.getComponent(PositionComponent::class.java).position
         val gridPosition = GridPoint2(playerPosition.x.toInt(), playerPosition.y.toInt())
         worldMap.setActiveChunks(worldMap.getChunksAround(worldMap.worldToChunk(gridPosition)))
     }
