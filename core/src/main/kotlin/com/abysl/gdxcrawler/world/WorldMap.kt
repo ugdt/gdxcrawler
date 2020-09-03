@@ -11,7 +11,7 @@ import kotlin.math.floor
  * @author Andrew Bueide and Emery Tanghanwaye
  * @param chunkSize
  */
-class TileWorld(private val chunkSize: Int, private val level: Level) {
+class WorldMap(private val chunkSize: Int, private val level: Level) {
     private val chunkMap: HashMap<GridPoint2, Chunk> = hashMapOf()
 
     /**

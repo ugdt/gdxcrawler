@@ -21,6 +21,7 @@ class EventManager {
 
     private fun <T : Event> processEvent(event: T) {
         subscriptions[event.javaClass]?.forEach {
+            @Suppress("UNCHECKED_CAST")
             (it as (T) -> Unit).invoke(event)
         }
     }

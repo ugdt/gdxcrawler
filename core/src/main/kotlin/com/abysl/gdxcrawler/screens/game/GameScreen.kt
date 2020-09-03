@@ -9,7 +9,7 @@ import com.abysl.gdxcrawler.rendering.GameRenderer
 import com.abysl.gdxcrawler.settings.InputSettings
 import com.abysl.gdxcrawler.settings.RenderSettings
 import com.abysl.gdxcrawler.utils.GameWorld
-import com.abysl.gdxcrawler.world.TileWorld
+import com.abysl.gdxcrawler.world.WorldMap
 import com.abysl.gdxcrawler.world.level.TutorialLevel
 import com.artemis.ArchetypeBuilder
 import com.artemis.Entity
@@ -24,12 +24,12 @@ import com.badlogic.gdx.math.Vector2
 import ktx.preferences.get
 
 class GameScreen : Screen, IPhysics {
-    private val tileWorld = TileWorld(64, TutorialLevel())
+    private val worldMap = WorldMap(64, TutorialLevel())
     private val world: World = GameWorld().create()
     private val playerId: Int
     private val playerEntity: Entity
     private val tagManager: TagManager = world.getSystem(TagManager::class.java)
-    private val worldRenderer = GameRenderer(world, tileWorld, RenderSettings(16, 20f, 11.5f))
+    private val worldRenderer = GameRenderer(world, worldMap, RenderSettings(16, 20f, 11.5f))
     private val eventManager: EventManager = world.getRegistered("eventManager")
     private val prefs: Preferences = world.getRegistered("preferences")
     private val multiplexer: InputMultiplexer = InputMultiplexer()
@@ -46,10 +46,10 @@ class GameScreen : Screen, IPhysics {
         tagManager.register("PLAYER", playerId)
 
         val playerEntity = world.getEntity(playerId)
-        val cPhysics = playerEntity.getComponent(CMove::class.java)
+        val cMove = playerEntity.getComponent(CMove::class.java)
         val cPosition = playerEntity.getComponent(CPosition::class.java)
         cPosition.position = Vector2(0f, 0f)
-        cPhysics.speed = 10f
+        cMove.speed = 10f
         return playerEntity
     }
 
@@ -83,6 +83,6 @@ class GameScreen : Screen, IPhysics {
 
         val playerPosition = playerEntity.getComponent(CPosition::class.java).position
         val gridPosition = GridPoint2(playerPosition.x.toInt(), playerPosition.y.toInt())
-        tileWorld.setActiveChunks(tileWorld.getChunksAround(tileWorld.worldToChunk(gridPosition)))
+        worldMap.setActiveChunks(worldMap.getChunksAround(worldMap.worldToChunk(gridPosition)))
     }
 }

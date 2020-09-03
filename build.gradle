@@ -18,10 +18,10 @@ allprojects {
     apply plugin: 'idea'
     apply plugin: "org.jlleitschuh.gradle.ktlint"
 
-
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
         dependsOn("ktlintFormat")
         kotlinOptions {
+            allWarningsAsErrors = true
             jvmTarget = 11
         }
     }

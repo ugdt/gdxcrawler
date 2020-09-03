@@ -1,7 +1,6 @@
 package com.abysl.gdxcrawler.utils
 
 import com.abysl.gdxcrawler.ecs.events.EventManager
-import com.abysl.gdxcrawler.ecs.systems.SEvent
 import com.abysl.gdxcrawler.ecs.systems.SMovement
 import com.artemis.World
 import com.artemis.WorldConfiguration
@@ -12,7 +11,6 @@ import com.badlogic.gdx.Gdx
 class GameWorld : WorldConfigurationBuilder() {
     init {
         with(
-            SEvent(),
             SMovement(),
             TagManager()
         )
