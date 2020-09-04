@@ -101,11 +101,11 @@ class WorldMap(private val chunkSize: Int, private val level: Level) {
     }
 
     fun collides(vararg vectors: Vector2): List<GridPoint2> {
-        val gridpoints = vectors.map {
+        val gridPoints = vectors.map {
             val x: Int = if (it.x >= 0) it.x.toInt() else it.x.toInt() - 1
-            val y: Int = if (it.y >= 0) it.y.toInt() else it.x.toInt() - 1
+            val y: Int = if (it.y >= 0) it.y.toInt() else it.y.toInt() - 1
             GridPoint2(x, y)
         }
-        return collides(gridpoints)
+        return collides(gridPoints)
     }
 }

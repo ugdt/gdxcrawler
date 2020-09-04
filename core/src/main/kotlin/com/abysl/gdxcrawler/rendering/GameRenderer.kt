@@ -27,40 +27,41 @@ import kotlin.math.roundToInt
 class GameRenderer(val world: World, private val worldMap: WorldMap, private val renderSettings: RenderSettings) {
     private val spriteBatch = SpriteBatch()
     private val shapeRenderer = ShapeRenderer()
-    private val cam: OrthographicCamera = world.getRegistered(OrthographicCamera::class.java)
+    private val camera: OrthographicCamera = world.getRegistered(OrthographicCamera::class.java)
         ?: OrthographicCamera(renderSettings.baseWidth, renderSettings.baseHeight)
     private val tagManager = world.getSystem(TagManager::class.java)
     private val drawableAspect: Aspect.Builder = Aspect.all(TextureComponent::class.java, PositionComponent::class.java)
     private val bodyAspect: Aspect.Builder = Aspect.all(BodyComponent::class.java, PositionComponent::class.java)
     private val positionMapper: ComponentMapper<PositionComponent> = world.getMapper(PositionComponent::class.java)
-    private val mTexture: ComponentMapper<TextureComponent> = world.getMapper(TextureComponent::class.java)
-    private val mBody: ComponentMapper<BodyComponent> = world.getMapper(BodyComponent::class.java)
+    private val textureMapper: ComponentMapper<TextureComponent> = world.getMapper(TextureComponent::class.java)
+    private val bodyMapper: ComponentMapper<BodyComponent> = world.getMapper(BodyComponent::class.java)
 
     fun render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         val player = tagManager.getEntity("PLAYER")
         val pos = player.getComponent(PositionComponent::class.java).position
 
-        cam.position.set(pos.x, pos.y, 0f)
-        cam.update()
+        camera.position.set(pos.x, pos.y, 0f)
+        camera.update()
 
         val drawables: List<Pair<Vector2, Drawable>> =
             (getEntities(drawableAspect).map(::entityToDrawable) + worldMap.getActiveChunks().flatMap(::chunkToDrawables))
                 .sortedWith(compareBy({ it.second.depth }, { if (it.second is DrawableLayer) -1 else 1 }))
         drawables.forEach {
-            spriteBatch.projectionMatrix = cam.combined
+            spriteBatch.projectionMatrix = camera.combined
             it.second.draw(spriteBatch, it.first.x, it.first.y, 1f, 1f)
         }
         renderBodies(shapeRenderer)
     }
 
     private fun renderBodies(shapeRenderer: ShapeRenderer) {
-        shapeRenderer.projectionMatrix = cam.combined
+        shapeRenderer.projectionMatrix = camera.combined
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line)
         shapeRenderer.color = Color.BLACK
+
         getEntities(bodyAspect).forEach {
             val pos: Vector2 = positionMapper[it].position
-            val body: Body = mBody[it].body
+            val body: Body = bodyMapper[it].body
             if (body is RectBody) {
                 shapeRenderer.rect(pos.x, pos.y, body.length, body.width)
             }
@@ -72,14 +73,14 @@ class GameRenderer(val world: World, private val worldMap: WorldMap, private val
     }
 
     private fun entityToDrawable(id: Int): Pair<Vector2, Drawable> {
-        val cPosition = positionMapper[id]
-        return cPosition.position to DrawableTexture(mTexture[id].texture, cPosition.depth)
+        val positionComponent = positionMapper[id]
+        return positionComponent.position to DrawableTexture(textureMapper[id].texture, positionComponent.depth)
     }
 
     private fun chunkToDrawables(chunk: Chunk): List<Pair<Vector2, Drawable>> {
         val result: MutableList<Pair<Vector2, Drawable>> = mutableListOf()
         for (layer in chunk.tileMap.layers) {
-            val drawable = DrawableLayer(cam, chunk.tileMap, layer as TiledMapTileLayer, renderSettings.tileSize)
+            val drawable = DrawableLayer(camera, chunk.tileMap, layer as TiledMapTileLayer, renderSettings.tileSize)
             val size = chunk.size.toFloat()
             val position = Vector2(chunk.chunkPosition.x * size, chunk.chunkPosition.y * size)
             result.add(position to drawable)
@@ -110,8 +111,8 @@ class GameRenderer(val world: World, private val worldMap: WorldMap, private val
         val deltaWidth: Float = (width - (renderSettings.baseWidth * tileWidthPixels).roundToInt()) / tileWidthPixels.toFloat()
         // calculate the camera height needed to keep things pixel perfect
         val deltaHeight: Float = (height - (renderSettings.baseHeight * tileWidthPixels)) / tileWidthPixels
-        cam.viewportWidth = (renderSettings.baseWidth + deltaWidth)
-        cam.viewportHeight = (renderSettings.baseHeight + deltaHeight)
+        camera.viewportWidth = (renderSettings.baseWidth + deltaWidth)
+        camera.viewportHeight = (renderSettings.baseHeight + deltaHeight)
 
         if (width % 2 != 0) {
             Gdx.graphics.setWindowedMode(width - 1, height)
@@ -120,5 +121,10 @@ class GameRenderer(val world: World, private val worldMap: WorldMap, private val
         if (height % 2 != 0) {
             Gdx.graphics.setWindowedMode(width, height - 1)
         }
+    }
+
+    fun dispose() {
+        shapeRenderer.dispose()
+        spriteBatch.dispose()
     }
 }

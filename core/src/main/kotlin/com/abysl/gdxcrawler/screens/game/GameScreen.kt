@@ -78,6 +78,7 @@ class GameScreen : Screen, IPhysics {
     }
 
     override fun dispose() {
+        worldRenderer.dispose()
     }
 
     override fun physics(delta: Float) {
