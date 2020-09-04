@@ -14,7 +14,6 @@ import com.artemis.annotations.Wire
 import com.artemis.managers.TagManager
 import com.artemis.systems.IteratingSystem
 import ktx.math.plus
-import ktx.math.times
 import ktx.math.vec2
 
 @All(MoveComponent::class, PositionComponent::class)
@@ -26,6 +25,7 @@ class MovementSystem : IteratingSystem() {
 
     @Wire(name = GameWorldConstants.EVENT_MANAGER)
     lateinit var eventManager: EventManager
+
     @Wire(name = GameWorldConstants.WORLD_MAP)
     lateinit var worldMap: WorldMap
 
@@ -51,11 +51,11 @@ class MovementSystem : IteratingSystem() {
             val collidesX = worldMap.collides(*body.getVertices(vec2(newPositionX, positionComponent.position.y)).toTypedArray()).isNotEmpty()
             val collidesY = worldMap.collides(*body.getVertices(vec2(positionComponent.position.x, newPositionY)).toTypedArray()).isNotEmpty()
 
-            if (! collidesX) {
+            if (!collidesX) {
                 positionComponent.position.x = newPositionX
             }
 
-            if (! collidesY) {
+            if (!collidesY) {
                 positionComponent.position.y = newPositionY
             }
         }
