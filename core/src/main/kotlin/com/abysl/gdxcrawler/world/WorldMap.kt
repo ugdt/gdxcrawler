@@ -80,13 +80,13 @@ class WorldMap(private val chunkSize: Int, private val level: Level) {
         points.forEach { point ->
             val chunk = getChunk(worldToChunk(point))
             val relativePosition: GridPoint2 = chunk.worldToRelative(point)
-                ?: error("ERROR: Relative position outside of chunk boundaries!")
+                    ?: error("ERROR: Relative position outside of chunk boundaries!")
             val collisionLayers: List<TiledMapTileLayer> =
-                chunk.tileMap.layers.filter {
-                    it.properties[TileConstants.COLLISION] == true
-                }.map {
-                    it as TiledMapTileLayer
-                }
+                    chunk.tileMap.layers.filter {
+                        it.properties[TileConstants.COLLISION] == true
+                    }.map {
+                        it as TiledMapTileLayer
+                    }
 
             val collides = collisionLayers.any {
                 it.getCell(relativePosition.x, relativePosition.y) != null

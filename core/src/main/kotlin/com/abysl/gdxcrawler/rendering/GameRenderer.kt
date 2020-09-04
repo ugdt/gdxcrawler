@@ -1,5 +1,6 @@
 package com.abysl.gdxcrawler.rendering
 
+import com.abysl.gdxcrawler.data.Aspects
 import com.abysl.gdxcrawler.ecs.components.BodyComponent
 import com.abysl.gdxcrawler.ecs.components.PositionComponent
 import com.abysl.gdxcrawler.ecs.components.TextureComponent
@@ -30,8 +31,6 @@ class GameRenderer(val world: World, private val worldMap: WorldMap, private val
     private val camera: OrthographicCamera = world.getRegistered(OrthographicCamera::class.java)
         ?: OrthographicCamera(renderSettings.baseWidth, renderSettings.baseHeight)
     private val tagManager = world.getSystem(TagManager::class.java)
-    private val drawableAspect: Aspect.Builder = Aspect.all(TextureComponent::class.java, PositionComponent::class.java)
-    private val bodyAspect: Aspect.Builder = Aspect.all(BodyComponent::class.java, PositionComponent::class.java)
     private val positionMapper: ComponentMapper<PositionComponent> = world.getMapper(PositionComponent::class.java)
     private val textureMapper: ComponentMapper<TextureComponent> = world.getMapper(TextureComponent::class.java)
     private val bodyMapper: ComponentMapper<BodyComponent> = world.getMapper(BodyComponent::class.java)
@@ -45,7 +44,7 @@ class GameRenderer(val world: World, private val worldMap: WorldMap, private val
         camera.update()
 
         val drawables: List<Pair<Vector2, Drawable>> =
-            (getEntities(drawableAspect).map(::entityToDrawable) + worldMap.getActiveChunks().flatMap(::chunkToDrawables))
+            (getEntities(Aspects.DRAWABLE.aspect).map(::entityToDrawable) + worldMap.getActiveChunks().flatMap(::chunkToDrawables))
                 .sortedWith(compareBy({ it.second.depth }, { if (it.second is DrawableLayer) -1 else 1 }))
         drawables.forEach {
             spriteBatch.projectionMatrix = camera.combined
@@ -59,7 +58,7 @@ class GameRenderer(val world: World, private val worldMap: WorldMap, private val
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line)
         shapeRenderer.color = Color.BLACK
 
-        getEntities(bodyAspect).forEach {
+        getEntities(Aspects.BODY.aspect).forEach {
             val pos: Vector2 = positionMapper[it].position
             val body: Body = bodyMapper[it].body
             if (body is RectBody) {
