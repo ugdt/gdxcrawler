@@ -20,4 +20,10 @@ class Chunk(val chunkPosition: GridPoint2, val size: Int, val tileMap: TiledMap,
     fun update(delta: Float) {
         println(delta)
     }
+
+    fun worldToRelative(position: GridPoint2): GridPoint2? {
+        val x = if (position.x >= 0) position.x % size else size + position.x
+        val y = if (position.y >= 0) position.y % size else size + position.y
+        return GridPoint2(x, y)
+    }
 }
