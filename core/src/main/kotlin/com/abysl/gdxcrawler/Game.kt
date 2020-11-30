@@ -21,7 +21,7 @@ class Game : KtxGame<Screen>() {
 
     override fun render() {
         super.render()
-        accumulator += Gdx.graphics.rawDeltaTime
+        accumulator += Gdx.graphics.deltaTime
 
         while (accumulator >= physicsTickRate) {
             physics(physicsTickRate)
