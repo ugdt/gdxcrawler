@@ -11,7 +11,7 @@ object Lwjgl3Launcher {
         createApplication()
     }
 
-    fun createApplication(): Lwjgl3Application {
+    private fun createApplication(): Lwjgl3Application {
         return Lwjgl3Application(Game(), defaultConfiguration)
     }
 

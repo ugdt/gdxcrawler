@@ -42,7 +42,7 @@ class GameInput(val eventManager: EventManager, var settings: InputSettings) : I
         return false
     }
 
-    override fun scrolled(amount: Int): Boolean {
+    override fun scrolled(amountX: Float, amountY: Float): Boolean {
         return false
     }
 }
